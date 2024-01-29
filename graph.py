@@ -1,5 +1,3 @@
-# { "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] }
-# { "tag" : "graph", "name" : "G2", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] }
 class LabeledGraphManager:
     def __init__(self):
         #  an list to store all the vertices of our current graph
@@ -11,7 +9,7 @@ class LabeledGraphManager:
         #  it take edgesList from the input
       try:      
         # we are extracting the edges data from edgeList.
-        # print("Values of edgesList:", edgesList)
+
         for edge in edgesList:
         # create a node for from and to iteratively.
             node_1 = edge["from"]
@@ -40,39 +38,30 @@ class LabeledGraphManager:
         # for each node -> the neighbour will be a pair of [label, weight]
         node_pair = [targetNode, traversalCost]
         sourceNode_neighbours.append(node_pair)
-        # return self.graph
 
-    def ifFindPath(self, sourceNode: str, targetNode: str, adjList: {},graphName: str):
-    # 'G1': [{'Adjacency List': {'A': [['B', 1], ['C', 2]], 'B': [['C', 3]], 'C': []}}]}
-        # print(adjList)
+
+    def ifFindPath(self, sourceNode: str, targetNode: str, adjList: {}):
+
         allPaths = []
         currentPath = []
 
-        print(adjList)
-        self.dfs(sourceNode,targetNode, currentPath,allPaths,adjList,graphName)
-        print(allPaths)
+        self.dfs(sourceNode,targetNode, currentPath,allPaths,adjList)
         
         allPathDescription = []
         
-        
         for eachPath in allPaths:
+            
             eachPathDescription =[]
-            print("individual path: " ,eachPath)
+
             iterable = 0
             start = eachPath[iterable]
             end = eachPath[iterable+1]
+            
             while(iterable < len(eachPath)):
-  
-                # print(iterable) 
-                print(start,end)
-                # print("start :",start, adjList[start])
-                
                 for neighbours,cost in adjList[start]:
                     if neighbours == end:
                         edgeDescription ={"from" : start,"to": end,"cost": cost}
                         eachPathDescription.append(edgeDescription)
-                
-
                 nextStart = iterable+1
                 nextEnd = iterable+2
                 if nextStart < len(eachPath) and nextEnd < len(eachPath):
@@ -82,16 +71,13 @@ class LabeledGraphManager:
                 else:
                     break
             
-            
-            # print(start,end)
-            
-            # print(eachPathDescription)
             allPathDescription.append(eachPathDescription)
+            
         return allPathDescription
 
         
     
-    def dfs(self, sourceNode: str, targetNode: str, current_path: [], all_paths: [], adjacencyList: {} ,graphName: str):
+    def dfs(self, sourceNode: str, targetNode: str, current_path: [], all_paths: [], adjacencyList: {} ):
         
         current_path.append(sourceNode)
 
@@ -100,7 +86,7 @@ class LabeledGraphManager:
 
             all_paths.append(temp_path_list)
         else:
-            for neighbor, traversalCost in adjacencyList[sourceNode]:
-                self.dfs(neighbor, targetNode, current_path, all_paths, adjacencyList, graphName)
+            for neighbour, traversalCost in adjacencyList[sourceNode]:
+                self.dfs(neighbour, targetNode, current_path, all_paths, adjacencyList)
 
         current_path.pop()
