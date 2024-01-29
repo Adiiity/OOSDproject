@@ -1,29 +1,26 @@
 # from project02.Interface import LabeledGraphManager
 class LabeledGraphManager:
     def __init__(self):
-        #  an list to store all the vertices of our current graph
-        self.graph = {}
+        # A dictionary to store multiple graphs, each identified by a unique name
+        self.graphs = {}
 
-    def createGraph(self, edgesList: []) :
-        # create labelled nodes
-        # create an edge between the nodes
-        #  it take edgesList from the input
-      try:
-        # we are extracting the edges data from edgeList.
+    def createGraph(self, graphName: str, edgesList: []):
+        # Ensure a new graph is created or an existing graph is fetched based on the graphName
+        if graphName not in self.graphs:
+            self.graphs[graphName] = {}
+        self.graph = self.graphs[graphName]
 
-        for edge in edgesList:
-        # create a node for from and to iteratively.
-            node_1 = edge["from"]
-            self.createNode(node_1)
-            node_2 = edge["to"]
-            self.createNode(node_2)
-            # connect node_1 -> node_2 to nodes
-            # CHECK FOR TRIANGLE INEQUALITY
-            self.connectNodes(node_1,node_2,edge["cost"])
-        return self.graph
+        try:
+            for edge in edgesList:
+                node_1 = edge["from"]
+                self.createNode(node_1)
+                node_2 = edge["to"]
+                self.createNode(node_2)
+                self.connectNodes(node_1, node_2, edge["cost"])
+            return self.graph
 
-      except Exception as errorMSG:
-          print(errorMSG)
+        except Exception as errorMSG:
+            print(errorMSG)
 
     def createNode(self, nodeLabel: str) -> None:
         # we create key for our node in the list and assign an empty list to hold neighbours
@@ -56,37 +53,40 @@ class LabeledGraphManager:
         return float('inf')
 
 
-    def mergeGraphs(self, graph1: 'LabeledGraphManager', graph2: 'LabeledGraphManager'):
+    def mergeGraphs(self, graphName1: str, graphName2: str):
         try:
+            if graphName1 not in self.graphs or graphName2 not in self.graphs:
+                raise ValueError("Both graph names must exist.")
+
+            graph1 = self.graphs[graphName1]
+            graph2 = self.graphs[graphName2]
+
             # Check if the graphs have disjoint sets of nodes
-            common_nodes = set(graph1.graph.keys()) & set(graph2.graph.keys())
+            common_nodes = set(graph1.keys()) & set(graph2.keys())
             if common_nodes:
                 raise ValueError("Both graphs should have disjoint sets of nodes.")
 
-            # Check if the cost interval condition is satisfied
-            total_cost_graph2 = 0
-            for node_neighbors_graph2 in graph2.graph.values():
-                for neighbor, cost in node_neighbors_graph2:
-                    total_cost_graph2 += cost
+            # Calculate total cost for each graph
+            total_cost_graph1 = sum(cost for neighbors in graph1.values() for _, cost in neighbors)
+            total_cost_graph2 = sum(cost for neighbors in graph2.values() for _, cost in neighbors)
 
-            total_cost_graph1 = 0
-            for node_neighbors_graph1 in graph1.graph.values():
-                for neighbor, cost in node_neighbors_graph1:
-                    total_cost_graph1 += cost
-
+            # Check if total costs are in the same interval
             if total_cost_graph1 > total_cost_graph2:
                 raise ValueError("Total cost of edges in graph1 should be in the same cost interval as graph 2.")
 
-            # Merge the graphs by updating graph2's adjacency list
-            for node, neighbors in graph1.graph.items():
-                graph2.createNode(node)
+            # Merge the graphs
+            for node, neighbors in graph1.items():
+                if node not in graph2:
+                    graph2[node] = []
                 for neighbor, cost in neighbors:
-                    graph2.connectNodes(node, neighbor, cost)
+                    graph2[node].append([neighbor, cost])
 
+            # Update the merged graph in the graphs dictionary
+            self.graphs[graphName2] = graph2
             return graph2
-
         except Exception as errorMSG:
             print(errorMSG)
+
 
     def ifFindPath(self, sourceNode: str, targetNode: str, adjList: {}):
 
@@ -138,3 +138,38 @@ class LabeledGraphManager:
                 self.dfs(neighbour, targetNode, current_path, all_paths, adjacencyList)
 
         current_path.pop()
+
+# Instantiate two graph managers
+graphManager1 = LabeledGraphManager()
+# graphManager2 = LabeledGraphManager()
+
+# Sample input for graph1
+sample_input1 = [
+    { "tag": "graph", "name": "G1", "edges": [
+        { "from": "D", "to": "E", "cost": 2 },
+        { "from": "E", "to": "F", "cost": 3 }
+    ] }
+]
+
+# Sample input for graph2
+sample_input2 = [
+    { "tag": "graph", "name": "G2", "edges": [
+        { "from": "X", "to": "Y", "cost": 5 },
+        { "from": "Y", "to": "Z", "cost": 4 }
+    ] }
+]
+
+
+# Create the graphs using the provided edges
+graph1 = graphManager1.createGraph("G1",sample_input1[0]["edges"])
+graph2 = graphManager1.createGraph("G2",sample_input2[0]["edges"])
+
+# Print the original graphs
+print("Graph 1:", graph1)
+print("Graph 2:", graph2)
+
+# Merge graph1 into graph2
+merged_graph = graphManager1.mergeGraphs("G1","G2")
+
+# Print the merged graph
+print("Merged Graph:", merged_graph)
