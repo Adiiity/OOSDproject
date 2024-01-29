@@ -50,8 +50,35 @@ class Client:
                     # elif graph_description["tag"] == "join":
                     #     print("the command to be executed is create graph")
 
-                    # elif graph_description["tag"] == "path":
-                    #     print("the command to be executed is create graph")
+                        elif tag == "path":
+                            new_graph = LabeledGraphManager()
+                            print("the command to be executed is path")
+                            # print("executed")
+                            # print(self.graphList)
+                            sourceNode = command["from"]
+                            
+                            targetNode = command["to"]
+
+                            pathsDescription=[]
+                            for graph in self.graphList:
+                                # print(self.graphList[graph])
+                                # print(graph)
+                                # print(sourceNode,targetNode)
+                                for adjList in self.graphList[graph]:
+                                    # print(graph,adjList)
+                                    # print(graph, adjList["Adjacency List"])
+                                    if sourceNode in adjList["Adjacency List"] and  targetNode in adjList["Adjacency List"] :
+                                        # print(f"{sourceNode} is a key in the Adjacency List.")
+                                        resultantEdgesPath = new_graph.ifFindPath(sourceNode,targetNode,adjList["Adjacency List"],graph)
+                            # print( "result",result)     
+                            for path in resultantEdgesPath:
+                                individual_path = {"tag": "cost", "edges" : path}
+                                pathsDescription.append(individual_path)
+                            print("Path desc",pathsDescription)
+                                
+                                    
+                                    
+
 
                 except Exception as errorMSG:
                     print(errorMSG)
@@ -62,16 +89,19 @@ class Client:
 # run the code
 def main():
     # Create a Client instance
-    client_instance = Client()
+    my_client = Client()
 
     # Execute commands based on the initialized graph
-    client_instance.execute_commands([{ "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] },
-{ "tag" : "graph", "name" : "G2", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] }])
+    my_client.execute_commands([
+        { "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] },
+{"tag" : "path", "from" : "A", "to" : "C" },
+
+])
     # client_instance.execute_commands({ "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] })
     
 if __name__ == "__main__":
     main()
 
 
-# [{ "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] },
+# [{ "tag" : "path", [{ "from" : "A", "to" : "C" }] }
 # { "tag" : "graph", "name" : "G1", "edges" : [{ "from" : "A", "to" : "B" , "cost" : 1 },{ "from" : "A", "to" : "C" , "cost" : 2 }, { "from" : "B", "to" : "C" , "cost" : 3 }] }]

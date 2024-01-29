@@ -42,5 +42,65 @@ class LabeledGraphManager:
         sourceNode_neighbours.append(node_pair)
         # return self.graph
 
-    # def ifFindPath(self,sourceNode, targetNode):
+    def ifFindPath(self, sourceNode: str, targetNode: str, adjList: {},graphName: str):
+    # 'G1': [{'Adjacency List': {'A': [['B', 1], ['C', 2]], 'B': [['C', 3]], 'C': []}}]}
+        # print(adjList)
+        allPaths = []
+        currentPath = []
+
+        print(adjList)
+        self.dfs(sourceNode,targetNode, currentPath,allPaths,adjList,graphName)
+        print(allPaths)
         
+        allPathDescription = []
+        
+        
+        for eachPath in allPaths:
+            eachPathDescription =[]
+            print("individual path: " ,eachPath)
+            iterable = 0
+            start = eachPath[iterable]
+            end = eachPath[iterable+1]
+            while(iterable < len(eachPath)):
+  
+                # print(iterable) 
+                print(start,end)
+                # print("start :",start, adjList[start])
+                
+                for neighbours,cost in adjList[start]:
+                    if neighbours == end:
+                        edgeDescription ={"from" : start,"to": end,"cost": cost}
+                        eachPathDescription.append(edgeDescription)
+                
+
+                nextStart = iterable+1
+                nextEnd = iterable+2
+                if nextStart < len(eachPath) and nextEnd < len(eachPath):
+                    start = eachPath[iterable+1]
+                    end = eachPath[iterable+2]
+                    iterable+=1
+                else:
+                    break
+            
+            
+            # print(start,end)
+            
+            # print(eachPathDescription)
+            allPathDescription.append(eachPathDescription)
+        return allPathDescription
+
+        
+    
+    def dfs(self, sourceNode: str, targetNode: str, current_path: [], all_paths: [], adjacencyList: {} ,graphName: str):
+        
+        current_path.append(sourceNode)
+
+        if sourceNode == targetNode:
+            temp_path_list = list(current_path)
+
+            all_paths.append(temp_path_list)
+        else:
+            for neighbor, traversalCost in adjacencyList[sourceNode]:
+                self.dfs(neighbor, targetNode, current_path, all_paths, adjacencyList, graphName)
+
+        current_path.pop()
