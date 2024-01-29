@@ -1,0 +1,7 @@
+[
+    {"tag": "graph", "name": "Graph1", "edges": [{"from": "A", "to": "B", "cost": 1.0}]},
+    {"tag": "graph", "name": "Graph2", "edges": [{"from": "C", "to": "D", "cost": 1.0}]},
+
+    {"tag": "join", "add": "Graph2", "to": "Graph1"},
+    {"tag": "path", "from": "A", "to": "B"}
+]
