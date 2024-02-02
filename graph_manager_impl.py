@@ -17,16 +17,15 @@ class LabeledGraphManager:
         try:
             for edge in edgesList:
                 node_1 = edge["from"]
-                print(node_1)
                 self.createNode(node_1)
                 node_2 = edge["to"]
-                print(node_2)
                 self.createNode(node_2)
                 self.connectNodes(node_1, node_2, edge["cost"])
             return self.graph
 
-        except Exception as errorMSG:
-            print(errorMSG)
+        except ValueError as e:
+            print({"error": e.args[0]})
+
 
     def createNode(self, nodeLabel: str) -> None:
         # we create key for our node in the list and assign an empty list to hold neighbours
@@ -36,17 +35,22 @@ class LabeledGraphManager:
 
     def connectNodes(self, sourceNode: str, targetNode: str, traversalCost: float) -> None:
         # detecting the triangle formation if the edge will be added
-        for node in self.graph:
-            if node != sourceNode and node != targetNode:
-                if self.isNeighborOrNot(sourceNode, node) and self.isNeighborOrNot(node, targetNode):
-                    cost1 = self.getEdgeCost(sourceNode, node)
-                    cost2 = self.getEdgeCost(node, targetNode)
-                    if not (cost1 + cost2 >= traversalCost and cost1 + traversalCost >= cost2 and cost2 + traversalCost >= cost1):
-                        raise ValueError("Triangle inequality not satisfied")
-                        # return
+        try:
+            for node in self.graph:
+                if node != sourceNode and node != targetNode:
+                    if self.isNeighborOrNot(sourceNode, node) and self.isNeighborOrNot(node, targetNode):
+                        cost1 = self.getEdgeCost(sourceNode, node)
+                        cost2 = self.getEdgeCost(node, targetNode)
+                        if not (cost1 + cost2 >= traversalCost and cost1 + traversalCost >= cost2 and cost2 + traversalCost >= cost1):
+                            raise ValueError("Triangle inequality not satisfied")
 
-        # adding the edge when all three triangle inequality theorems are satisfied
-        self.graph[sourceNode].append([targetNode, traversalCost])
+
+            # adding the edge when all three triangle inequality theorems are satisfied
+            self.graph[sourceNode].append([targetNode, traversalCost])
+        except ValueError as e:
+            print({"error": e.args[0]})
+
+
 
     def isNeighborOrNot(self, node1: str, node2: str):
         return any(neighbor == node2 for neighbor, _ in self.graph[node1])
@@ -90,60 +94,47 @@ class LabeledGraphManager:
 
             # Update the merged graph in the graphs dictionary
             self.graphs[graphName2] = graph2
-            print("Merged")
             return graph2
-        except Exception as errorMSG:
-            print(errorMSG)
+
+        except ValueError as e:
+            print({"error": e.args[0]})
 
 
-    def ifFindPath(self, sourceNode: str, targetNode: str, adjList: {}):
 
-        allPaths = []
-        currentPath = []
 
-        self.dfs(sourceNode,targetNode, currentPath,allPaths,adjList)
-        print(allPaths)
+
+    def ifFindPath(self, sourceNode: str, targetNode: str, graphList: {}):
         allPathDescription = []
 
-        for eachPath in allPaths:
+        for graph_name, graph_adj_list in graphList.items():
+            if sourceNode in graph_adj_list and targetNode in graph_adj_list:
+                allPaths = []
+                currentPath = []
+                self.dfs_helper(sourceNode, targetNode, currentPath, allPaths, graph_adj_list)
 
-            eachPathDescription =[]
+                for eachPath in allPaths:
+                    eachPathDescription = []
+                    for i in range(len(eachPath) - 1):
+                        start, end = eachPath[i], eachPath[i+1]
+                        for neighbor, cost in graph_adj_list[start]:
+                            if neighbor == end:
+                                edgeDescription = {"from": start, "to": end, "cost": cost}
+                                eachPathDescription.append(edgeDescription)
 
-            iterable = 0
-            start = eachPath[iterable]
-            end = eachPath[iterable+1]
-
-            while(iterable < len(eachPath)):
-                for neighbours,cost in adjList[start]:
-                    if neighbours == end:
-                        edgeDescription ={"from" : start,"to": end,"cost": cost}
-                        eachPathDescription.append(edgeDescription)
-                nextStart = iterable+1
-                nextEnd = iterable+2
-                if nextStart < len(eachPath) and nextEnd < len(eachPath):
-                    start = eachPath[iterable+1]
-                    end = eachPath[iterable+2]
-                    iterable+=1
-                else:
-                    break
-
-            allPathDescription.append(eachPathDescription)
+                    allPathDescription.append(eachPathDescription)
 
         return allPathDescription
 
-
-
-    def dfs(self, sourceNode: str, targetNode: str, current_path: [], all_paths: [], adjacencyList: {} ):
-
+    def dfs_helper(self, sourceNode, targetNode, current_path, all_paths, current_adj_list):
         current_path.append(sourceNode)
 
         if sourceNode == targetNode:
             temp_path_list = list(current_path)
-
             all_paths.append(temp_path_list)
         else:
-            for neighbour, traversalCost in adjacencyList[sourceNode]:
-                self.dfs(neighbour, targetNode, current_path, all_paths, adjacencyList)
+            for neighbour, _ in current_adj_list[sourceNode]:
+                if neighbour not in current_path:
+                    self.dfs_helper(neighbour, targetNode, current_path, all_paths, current_adj_list)
 
         current_path.pop()
 
