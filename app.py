@@ -13,10 +13,11 @@ def create_graph():
     high=data['high']
 
     result=manager.createGraph(graph_name, low, high)
-
     # return jsonify({"message": "Graph created successfully"}),200
     print("result: ",result)
-    return result
+    return result,200
+
+    
 
 @app.route('/add', methods=['POST'] )
 def connect_nodes():
@@ -29,7 +30,9 @@ def connect_nodes():
     result=manager.connectNodes(graph_name,from_node,to_node,cost)
     print("result: ",result)
     # return jsonify({"message":"Added edge successfully"}),200
-    return result
+    if result is None:
+        return {"error": "Some unexpected error has occured"}
+    return result,200
 
 @app.route('/join',methods=['POST'])
 def merge_graphs():
@@ -48,15 +51,16 @@ def get_nodes(graph_name):
 def get_edges(graph_name):
     # data=request.json
     nodes=manager.getEdges(graph_name)
-    return jsonify(nodes),200
+    return nodes,200
 
 @app.route('/path/<graph_name>/<from_node>/<to_node>',methods=['GET'])
 def get_path(graph_name,from_node,to_node):
     paths = manager.ifFindPath(graph_name,from_node,to_node)
-    return jsonify(paths),200
-    # data=request.json
-    # nodes=manager.getEdges(graph_name)
-    # return jsonify(nodes),200
+    print("Paths ",paths )
+    if len(paths) == 0:
+        return "null"
+    return paths,200
+
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5432,debug=True)
