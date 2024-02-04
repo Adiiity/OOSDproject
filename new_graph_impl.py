@@ -15,98 +15,85 @@ class LabeledGraphManager:
         if not (low > 0 and high >  0):
             error_response = {"error": "low and high values must be non-negative and non-zero."}
             return jsonify(error_response)
+            # return {"error": "low and high values must be non-negative and non-zero."}
 
         if graphName not in self.graphs:
             self.graphs[graphName] = {"low": low, "high": high,"nodes": {}, "edges": []}
-            
+
             response = jsonify({"low":self.graphs[graphName]["low"],"high":self.graphs[graphName]["high"],"edges":self.graphs[graphName]["edges"]})
             return response
+            # return {"low":self.graphs[graphName]["low"],"high":self.graphs[graphName]["high"],"edges":self.graphs[graphName]["edges"]}
         else:
             error_response = {"error":"Graph already exists."}
             return jsonify(error_response)
+            # return {"error":"Graph already exists."}
 
     def createNode(self, graphName: str, nodeLabel: str):
         if nodeLabel not in self.graphs[graphName]["nodes"]:
             self.graphs[graphName]["nodes"][nodeLabel] = []
 
-    def connectNodes(self, graphName: str, sourceNode: str, targetNode: str, traversal_cost: str):
-        #checking if graph is there in the graphs
+    def connectNodes(self, graphName: str, sourceNode: str, targetNode: str, traversal_cost: float):
         graph = self.graphs.get(graphName)
-        # print("GRAPH",graph)
-        
-        
         if not graph:
-            # print({"error": "Graph not found"})
+            return {"error": "Graph not found"}
 
-            error_response = jsonify({"error": "Graph not found"}),404
-            return error_response
-        
-        # validate edge cost with interval
-        low_interval = float(graph["low"])
-        high_interval = float(graph["high"])
         traversalCost = float(traversal_cost)
-        if not  (traversalCost >= low_interval and traversalCost <= high_interval):
-            error_response = {"error": "edge weight should lie between the cost intervals."}
-            return jsonify(error_response)
-        # checking if both nodes exist in the graph
+        #the new cost of new edge should be in cost interval
+        if traversalCost < graph["low"] or traversalCost > graph["high"]:
+            return {"error": "Edge weight should lie between the cost intervals."}
+
+        #if node does not exist than should create
         if sourceNode not in graph["nodes"]:
             self.createNode(graphName, sourceNode)
         if targetNode not in graph["nodes"]:
             self.createNode(graphName, targetNode)
 
-        # check if there is already an edge between source and destination
-        # print("GRAPH is", graph)
-
-        neighbour_present = False
+        #to check if edge exists already
         for neighbour, _ in graph["nodes"][sourceNode]:
             if neighbour == targetNode:
-                neighbour_present = True
-                break
-        
-        if neighbour_present is True:
-            error_response = {"error": "edge already exists."}
-            return jsonify(error_response)
-        
-        # Triangle inequality check
-        try:
-            for node in graph["nodes"]:
-                if node != sourceNode and node != targetNode and self.isNeighborOrNot(graphName, sourceNode, node) and self.isNeighborOrNot(graphName, node, targetNode):
+                return {"error": "Edge already exists."}
+
+        triangle_detected = False
+        for node in graph["nodes"]:
+            # checking the common node in the triangle to detect triangle formation
+            if node != sourceNode and node != targetNode:
+                if (node in [neighbour for neighbour, _ in graph["nodes"].get(sourceNode, [])] or
+                sourceNode in [neighbour for neighbour, _ in graph["nodes"].get(node, [])]) and \
+               (node in [neighbour for neighbour, _ in graph["nodes"].get(targetNode, [])] or
+                targetNode in [neighbour for neighbour, _ in graph["nodes"].get(node, [])]):
+
+                # triangle detected, now checking triangle inequality
                     cost1 = self.getEdgeCost(graphName, sourceNode, node)
+                    # print("cost1: ",cost1)
                     cost2 = self.getEdgeCost(graphName, node, targetNode)
-                    if not (cost1 + cost2 >= traversalCost and cost1 + traversalCost >= cost2 and cost2 + traversalCost >= cost1):
-                        # print("Traingle failed")
-                        error_response = {"error": "Triangle inequality not satisfied"}
-                        return error_response
+                    # print("cost2: ",cost2)
 
-            # add nodes and edges if triangle inequality is satisfied
+                    cost3 = traversalCost  # new cost to check the trioangle inequality
+                    # print("cost3: ",cost3)
+
+                    if cost1 + cost2 >= cost3 and cost1 + cost3 >= cost2 and cost2 + cost3 >= cost1:
+                        triangle_detected = True
+                        break
+                    else:
+                        # print("Triangle inequality not satisfied")
+                        return {"error": "Triangle inequality not satisfied"}
+
+        if not triangle_detected:
+            # If no triangle is detected or triangle inequality is satisfied, add the edge
             graph["nodes"][sourceNode].append((targetNode, traversalCost))
-            edgeDescription = {"from": sourceNode, "to": targetNode, "cost": traversalCost}
-            graph["edges"].append(edgeDescription)
-            # print("Edge added successfully")
-            # return graph
-            # return {"from": sourceNode, "to": targetNode, "cost": traversalCost}
-            response = jsonify({"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}),200
-            return response
-        except ValueError as e:
-            print({"error": e.args[0]})
+            graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
+            return {"message": "Edge added successfully", "from": sourceNode, "to": targetNode, "cost": traversalCost}
 
-    #checking common node to check triangle formation
-    def isNeighborOrNot(self, graphName: str, node1: str, node2: str):
-        graph = self.graphs.get(graphName)
-        if not graph:
-            return False
-        for neighbor, _ in graph["nodes"].get(node1, []):
-            if neighbor == node2:
-                return True
-        return False
 
-    #function for getting edge cost that can help to check triangle inequality
     def getEdgeCost(self, graphName: str, node1: str, node2: str):
-        graph = self.graphs.get(graphName)
-        if not graph:
-            return float('inf')
+        graph = self.graphs.get(graphName, {})
+        #checking direct connection
         for neighbor, cost in graph["nodes"].get(node1, []):
             if neighbor == node2:
+                return cost
+        #checking reverse connection
+        for neighbor, cost in graph["nodes"].get(node2, []):
+            if neighbor == node1:
                 return cost
         return float('inf')
 
@@ -143,6 +130,9 @@ class LabeledGraphManager:
         self.graphs[graphName1] = graph1
         print("After graph 1: ",graph1)
 
+        #delete graph2
+        del self.graphs[graphName2]
+
         # expected response format
         edges_description = [{"from": edge["from"], "to": edge["to"], "cost": str(edge["cost"])} for edge in graph1["edges"]]
         response = {"low": graph1["low"], "high": graph1["high"], "edges": edges_description}
@@ -169,7 +159,7 @@ class LabeledGraphManager:
             for edge in self.graphs[graphName]["edges"]:
                 # print("edge: ",edge)
                 edges_list.append({"from": edge["from"], "to": edge["to"], "cost": str(edge["cost"])})
-                
+
             return edges_list
         else:
             error_response = {"error": "Graph not found"}
@@ -186,12 +176,13 @@ class LabeledGraphManager:
         # print("adj list = ",graph_adj_list)
         givenGraph = self.graphs[graphName]
         # a path exists only if both src and tgt are there in the adj list
-            
+
         if not (sourceNode in graph_adj_list and targetNode in graph_adj_list):
-            error_response = jsonify({"error" : "The given nodes are not present in the given graph."})
-            return error_response
-        
-        # store all the path in a list and perform dfs 
+            # error_response = jsonify({"error" : "The given nodes are not present in the given graph."})
+            # return error_response
+            return {"error" : "The given nodes are not present in the given graph."}
+
+        # store all the path in a list and perform dfs
         allPaths = []
         currentPath = []
         self.dfs_helper(sourceNode, targetNode, currentPath, allPaths, graph_adj_list)
@@ -209,7 +200,7 @@ class LabeledGraphManager:
                                 pathDescription.append(edgeDescription)
                     allPathDescription.append(pathDescription)
         # print("DETAILED ALL PATHS EDGE DESC:",allPathDescription)
-        
+
         response = []
         # our allPathDescription is a list of dicts lists. We need to send only list of dicts
         for itemList in allPathDescription:
@@ -233,16 +224,16 @@ class LabeledGraphManager:
         current_path.pop()
 
 # Initialize the graph manager
-# manager = LabeledGraphManager()
+manager = LabeledGraphManager()
 
 # # Create two graphs with their cost intervals
-# manager.createGraph("Graph1", 1, 10)
+manager.createGraph("Graph1", 1, 10)
 # # manager.createGraph("Graph2", 5, 15)
 
 # # Add nodes and edges to Graph1
-# manager.connectNodes("Graph1", "A", "B", B)
-# manager.connectNodes("Graph1", "B", "C", 9)
-# manager.connectNodes("Graph1", "A", "C", 3)
+manager.connectNodes("Graph1", "A", "B", 2)
+manager.connectNodes("Graph1", "B", "C", 3)
+manager.connectNodes("Graph1", "A", "C", 5)
 
 
 # Add nodes and edges to Graph2 with disjoint nodes from Graph1
@@ -251,7 +242,7 @@ class LabeledGraphManager:
 
 # Attempt to merge Graph2 into Graph1
 # result = manager.mergeGraphs("Graph1", "Graph2")
-# result=manager.graphs["Graph1"]
-# print(result)
+result=manager.graphs["Graph1"]
+print(result)
 # print(manager.getNodes("Graph1"))
-# print(manager.getEdges("Graph1"))
+print(manager.getEdges("Graph1"))
