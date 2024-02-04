@@ -59,4 +59,4 @@ def get_path(graph_name,from_node,to_node):
     # return jsonify(nodes),200
 
 if __name__=="__main__":
-    app.run(host='0.0.0.0', port=5020,debug=True)
+    app.run(host='0.0.0.0', port=5432,debug=True)
