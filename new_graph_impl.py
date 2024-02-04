@@ -144,7 +144,7 @@ class LabeledGraphManager:
         print("After graph 1: ",graph1)
 
         # expected response format
-        edges_description = [{"from": edge["from"], "to": edge["to"], "cost": edge["cost"]} for edge in graph1["edges"]]
+        edges_description = [{"from": edge["from"], "to": edge["to"], "cost": str(edge["cost"])} for edge in graph1["edges"]]
         response = {"low": graph1["low"], "high": graph1["high"], "edges": edges_description}
         return jsonify(response)
 
@@ -168,45 +168,67 @@ class LabeledGraphManager:
             print(graphName)
             for edge in self.graphs[graphName]["edges"]:
                 # print("edge: ",edge)
-                edges_list.append({"from": edge["from"], "to": edge["to"], "cost": edge["cost"]})
+                edges_list.append({"from": edge["from"], "to": edge["to"], "cost": str(edge["cost"])})
                 
             return edges_list
         else:
             error_response = {"error": "Graph not found"}
             return jsonify(error_response)
 
-    def ifFindPath(self, sourceNode: str, targetNode: str, graphList: {}):
+    def ifFindPath(self,graphName: str, sourceNode: str, targetNode: str):
         allPathDescription = []
+        # check if graphList has the searched graphName
+        if graphName not in self.graphs:
+            error_response = jsonify({"error" : "Graph not found."})
+            return error_response
+        # all the adj lists of the given graph
+        graph_adj_list = self.graphs[graphName]["nodes"]
+        # print("adj list = ",graph_adj_list)
+        givenGraph = self.graphs[graphName]
+        # a path exists only if both src and tgt are there in the adj list
+            
+        if not (sourceNode in graph_adj_list and targetNode in graph_adj_list):
+            error_response = jsonify({"error" : "The given nodes are not present in the given graph."})
+            return error_response
+        
+        # store all the path in a list and perform dfs 
+        allPaths = []
+        currentPath = []
+        self.dfs_helper(sourceNode, targetNode, currentPath, allPaths, graph_adj_list)
 
-        for graph_name, graph_adj_list in graphList.items():
-            if sourceNode in graph_adj_list and targetNode in graph_adj_list:
-                allPaths = []
-                currentPath = []
-                self.dfs_helper(sourceNode, targetNode, currentPath, allPaths, graph_adj_list)
+        # print("ALL POSSIBLE PATHS IN THE GRAPH", allPaths)
 
-                for eachPath in allPaths:
-                    eachPathDescription = []
+        # iterate through each path in all paths to get the edge desc
+        for eachPath in allPaths:
+                    pathDescription = []
                     for i in range(len(eachPath) - 1):
                         start, end = eachPath[i], eachPath[i+1]
                         for neighbor, cost in graph_adj_list[start]:
                             if neighbor == end:
-                                edgeDescription = {"from": start, "to": end, "cost": cost}
-                                eachPathDescription.append(edgeDescription)
+                                edgeDescription = {"from": start, "to": end, "cost": str(cost)}
+                                pathDescription.append(edgeDescription)
+                    allPathDescription.append(pathDescription)
+        # print("DETAILED ALL PATHS EDGE DESC:",allPathDescription)
+        
+        response = []
+        # our allPathDescription is a list of dicts lists. We need to send only list of dicts
+        for itemList in allPathDescription:
+            for edgeDescription in itemList:
+                response.append(edgeDescription)
+        # print("RESPONSE ", response)
+        return response
 
-                    allPathDescription.append(eachPathDescription)
+    def dfs_helper(self, sourceNode, targetNode, current_path, all_paths,adj_list):
 
-        return allPathDescription
-
-    def dfs_helper(self, sourceNode, targetNode, current_path, all_paths, current_adj_list):
         current_path.append(sourceNode)
 
         if sourceNode == targetNode:
             temp_path_list = list(current_path)
             all_paths.append(temp_path_list)
         else:
-            for neighbour, _ in current_adj_list[sourceNode]:
+            for neighbour, _ in adj_list[sourceNode]:
                 if neighbour not in current_path:
-                    self.dfs_helper(neighbour, targetNode, current_path, all_paths, current_adj_list)
+                    self.dfs_helper(neighbour, targetNode, current_path, all_paths, adj_list)
 
         current_path.pop()
 

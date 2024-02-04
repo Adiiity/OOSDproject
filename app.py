@@ -50,11 +50,13 @@ def get_edges(graph_name):
     nodes=manager.getEdges(graph_name)
     return jsonify(nodes),200
 
-# @app.route('/path/<graph_name>/<graph_name>',methods=['GET'])
-# def get_path(graph_name):
-#     # data=request.json
-#     nodes=manager.getEdges(graph_name)
-#     return jsonify(nodes),200
+@app.route('/path/<graph_name>/<from_node>/<to_node>',methods=['GET'])
+def get_path(graph_name,from_node,to_node):
+    paths = manager.ifFindPath(graph_name,from_node,to_node)
+    return jsonify(paths),200
+    # data=request.json
+    # nodes=manager.getEdges(graph_name)
+    # return jsonify(nodes),200
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5020,debug=True)
