@@ -13,11 +13,10 @@ def create_graph():
     high=data['high']
 
     result=manager.createGraph(graph_name, low, high)
-    print(result)
 
     # return jsonify({"message": "Graph created successfully"}),200
     print("result: ",result)
-    return result,200
+    return result
 
 @app.route('/add', methods=['POST'] )
 def connect_nodes():
@@ -30,7 +29,7 @@ def connect_nodes():
     result=manager.connectNodes(graph_name,from_node,to_node,cost)
     print("result: ",result)
     # return jsonify({"message":"Added edge successfully"}),200
-    return result,200
+    return result
 
 @app.route('/join',methods=['POST'])
 def merge_graphs():
@@ -52,4 +51,4 @@ def get_edges(graph_name):
     return jsonify(nodes),200
 
 if __name__=="__main__":
-    app.run(host='0.0.0.0', port='5432',debug=True)
+    app.run(host='0.0.0.0', port=5020,debug=True)
