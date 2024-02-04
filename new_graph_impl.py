@@ -7,9 +7,10 @@ class LabeledGraphManager:
         # a dictionary to store multiple graphs, each identified by a unique name
         self.graphs = {}
 
-    def createGraph(self, graphName: str, low: float, high: float):
+    def createGraph(self, graphName: str, low: str, high: str):
 
-
+        low = float(low)
+        high = float(high)
         # to check negative input
         if not (low > 0 and high >  0):
             error_response = {"error": "low and high values must be non-negative and non-zero."}
@@ -28,7 +29,7 @@ class LabeledGraphManager:
         if nodeLabel not in self.graphs[graphName]["nodes"]:
             self.graphs[graphName]["nodes"][nodeLabel] = []
 
-    def connectNodes(self, graphName: str, sourceNode: str, targetNode: str, traversalCost: float) -> None:
+    def connectNodes(self, graphName: str, sourceNode: str, targetNode: str, traversal_cost: str):
         #checking if graph is there in the graphs
         graph = self.graphs.get(graphName)
         # print("GRAPH",graph)
@@ -43,6 +44,7 @@ class LabeledGraphManager:
         # validate edge cost with interval
         low_interval = float(graph["low"])
         high_interval = float(graph["high"])
+        traversalCost = float(traversal_cost)
         if not  (traversalCost >= low_interval and traversalCost <= high_interval):
             error_response = {"error": "edge weight should lie between the cost intervals."}
             return jsonify(error_response)
@@ -152,7 +154,8 @@ class LabeledGraphManager:
         if graphName in self.graphs:
             for node in self.graphs[graphName]["nodes"]:
                 nodes_list.append({"node": node})
-            return nodes_list
+            response = nodes_list
+            return response
         else:
             error_response = {"error": "Graph not found"}
             return jsonify(error_response)

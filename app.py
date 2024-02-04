@@ -41,14 +41,20 @@ def merge_graphs():
 @app.route('/nodes/<graph_name>', methods=['GET'])
 def get_nodes(graph_name):
     # data=request.json
-    nodes=get_nodes(graph_name)
-    return jsonify(nodes),200
+    nodes=manager.getNodes(graph_name)
+    return nodes,200
 
-@app.route('/edge/<graph_name>',methods=['GET'])
+@app.route('/edges/<graph_name>',methods=['GET'])
 def get_edges(graph_name):
     # data=request.json
-    nodes=get_edges(graph_name)
+    nodes=manager.getEdges(graph_name)
     return jsonify(nodes),200
+
+# @app.route('/path/<graph_name>/<graph_name>',methods=['GET'])
+# def get_path(graph_name):
+#     # data=request.json
+#     nodes=manager.getEdges(graph_name)
+#     return jsonify(nodes),200
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=5020,debug=True)
