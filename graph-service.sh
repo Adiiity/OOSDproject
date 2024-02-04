@@ -1,2 +1,2 @@
 pip3 install flask
-flask run
+flask run --port 5432
