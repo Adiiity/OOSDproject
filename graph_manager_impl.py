@@ -24,7 +24,8 @@ class LabeledGraphManager:
             return self.graph
 
         except ValueError as e:
-            print({"error": e.args[0]})
+            # print({"error": e.args[0]})
+            return e.args[0]
 
 
     def createNode(self, nodeLabel: str) -> None:
