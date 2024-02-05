@@ -74,7 +74,7 @@ class LabeledGraphManager:
                     if cost1 + cost2 >= cost3 and cost1 + cost3 >= cost2 and cost2 + cost3 >= cost1:
                         triangle_detected = True
                         graph["nodes"][sourceNode].append((targetNode, traversalCost))
-                        graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
+                        graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": str(traversalCost)})
                         response = {"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}
                         return response
                     else:
@@ -84,7 +84,7 @@ class LabeledGraphManager:
         if not triangle_detected:
             # If no triangle is detected, add the edge
                 graph["nodes"][sourceNode].append((targetNode, traversalCost))
-                graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
+                graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": str(traversalCost)})
                 response = {"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}
                 return response
             
@@ -205,14 +205,9 @@ class LabeledGraphManager:
                                 edgeDescription = {"from": start, "to": end, "cost": str(cost)}
                                 pathDescription.append(edgeDescription)
                     allPathDescription.append(pathDescription)
-        # print("DETAILED ALL PATHS EDGE DESC:",allPathDescription)
+        print("DETAILED ALL PATHS EDGE DESC:",allPathDescription)
 
-        response = []
-        # our allPathDescription is a list of dicts lists. We need to send only list of dicts
-        for itemList in allPathDescription:
-            for edgeDescription in itemList:
-                response.append(edgeDescription)
-        # print("RESPONSE ", response)
+        response = allPathDescription
         return response
 
     def dfs_helper(self, sourceNode, targetNode, current_path, all_paths,adj_list):
