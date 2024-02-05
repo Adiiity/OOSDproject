@@ -73,17 +73,22 @@ class LabeledGraphManager:
 
                     if cost1 + cost2 >= cost3 and cost1 + cost3 >= cost2 and cost2 + cost3 >= cost1:
                         triangle_detected = True
-                        break
+                        graph["nodes"][sourceNode].append((targetNode, traversalCost))
+                        graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
+                        response = {"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}
+                        return response
                     else:
                         # print("Triangle inequality not satisfied")
                         return {"error": "Triangle inequality not satisfied"}
 
         if not triangle_detected:
-            # If no triangle is detected or triangle inequality is satisfied, add the edge
-            graph["nodes"][sourceNode].append((targetNode, traversalCost))
-            graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
-            response = {"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}
-            return response
+            # If no triangle is detected, add the edge
+                graph["nodes"][sourceNode].append((targetNode, traversalCost))
+                graph["edges"].append({"from": sourceNode, "to": targetNode, "cost": traversalCost})
+                response = {"low":graph["low"],"high":graph["high"],"edges":graph["edges"]}
+                return response
+            
+            
 
 
     def getEdgeCost(self, graphName: str, node1: str, node2: str):
@@ -224,26 +229,3 @@ class LabeledGraphManager:
 
         current_path.pop()
 
-# # Initialize the graph manager
-# manager = LabeledGraphManager()
-
-# # # Create two graphs with their cost intervals
-# manager.createGraph("Graph1", 1, 10)
-# # # manager.createGraph("Graph2", 5, 15)
-
-# # # Add nodes and edges to Graph1
-# manager.connectNodes("Graph1", "A", "B", 2)
-# manager.connectNodes("Graph1", "B", "C", 3)
-# manager.connectNodes("Graph1", "A", "C", 5)
-
-
-# # Add nodes and edges to Graph2 with disjoint nodes from Graph1
-# # manager.connectNodes("Graph2", "D", "E", 4)
-# # manager.connectNodes("Graph2", "E", "F", 5)
-
-# # Attempt to merge Graph2 into Graph1
-# # result = manager.mergeGraphs("Graph1", "Graph2")
-# result=manager.graphs["Graph1"]
-# print(result)
-# # print(manager.getNodes("Graph1"))
-# print(manager.getEdges("Graph1"))
