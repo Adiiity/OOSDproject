@@ -1,12 +1,10 @@
 class Hotel:
     def __init__(self,hotel_name) -> None:
-        self.hotel_name=hotel_name
-        self.tiles_list=[]
-
         pass
 
-    def found_hotel(self,tile):
+    def found_hotel(self, hotel_name, tile):
         pass
+
 
     def merge_hotel():
         pass
