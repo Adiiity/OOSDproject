@@ -39,19 +39,22 @@ class Hotel:
 
 
 class Tile:
-    def __init__(self,row :str,col :int):
+    def __init__(self,row :int,col :str):
         self.row=row
         self.col=col
-        self.isAvailable = False
+
         
-    def get_row_number(self,row :str):
+    def get_row_number(self,row :int):
         
-        ascii_value = ord(row[0])
-        ascii_value_A = ord('A')
         
-        board_row_number = ascii_value-ascii_value_A
+        board_row_number = row - 1
         return board_row_number
     
-    def get_row_number(self,col :int):
-        board_col_number = col - 1
+    def get_col_number(self,col :str):
+        
+        ascii_value = ord(col[0])
+        ascii_value_A = ord('A')
+        
+        board_col_number = ascii_value-ascii_value_A
         return board_col_number
+        
