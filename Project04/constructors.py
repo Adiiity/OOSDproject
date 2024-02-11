@@ -62,24 +62,19 @@ class Hotel:
 
 
 class Tile:
-    def __init__(self,row,col):
-        self.row=row
-        self.col=col
+    def __init__(self, row, col):
+        if not ('A' <= row.upper() <= 'I'):
+            raise ValueError("Row must be a letter from A to I.")
+        if not (1 <= int(col) <= 12):
+            raise ValueError("Column must be a number from 1 to 12.")
+
+        self.row = row.upper()  # Ensures row is uppercase
+        self.col = int(col)  # Ensures col is an integer
 
     def get_col_number(self):
-
-
-        board_col_number = self.col - 1
-        return board_col_number
+        # Column is already validated as an integer from 1 to 12, subtract 1 for 0-based indexing
+        return self.col - 1
 
     def get_row_number(self):
-
-        ascii_value = ord(self.row[0])
-        ascii_value_A = ord('A')
-
-        board_row_number = ascii_value-ascii_value_A
-        return board_row_number
-
-    def create_tile(self):
-        # Returns a tuple (row,col)
-        return (self.get_row_number(), self.get_col_number())
+        # Convert row letter (validated as A to I) to 0-based index
+        return ord(self.row) - ord('A')

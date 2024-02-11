@@ -5,23 +5,22 @@ class Game:
         self.occupied_tiles={}
         self.occupied_hotels = {}
         self.availableHotels = Hotel.hotelChains
-        self.row=Tile.get_row_number()
-        self.col=Tile.get_col_number()
-        self.tile=Tile.create_tile()
+        # self.row=Tile.get_row_number()
+        # self.col=Tile.get_col_number()
+        # self.tile=Tile.create_tile()
         # pass
 
     def singleton(self,row,col):
         # self.row=row
-        # tile=Tile(l)
-        # row = tile.get_row_number()
-        # col = tile.get_col_number()
-        print(f"row: {self.row} col: {self.col}")
+        tile = Tile(str(row), str(col))
+        row_index, col_index = tile.get_row_number(),tile.get_col_number()
+        print(f"row: {row_index} col: {col_index}")
 
-        if 0 <= row < self.board.rows and 0 <= col < self.board.cols:
-            if self.board.board_matrix[row][col] == 0:  #checking if the tile is unoccupied
-                self.board.board_matrix[row][col] = 1
-                self.occupied_tiles[self.tile] = "hotelname"  #for now just keeping the value as hotelnamme
-                # print(f"occupied tiles: {self.occupied_tiles}")
+        if 0 <= row_index < self.board.rows and 0 <= col_index < self.board.cols:
+            if self.board.board_matrix[row_index][col_index] == 0:  #checking if the tile is unoccupied
+                self.board.board_matrix[row_index][col_index] = 1
+                self.occupied_tiles[row,col] = "hotelname"  #for now just keeping the value as hotelnamme
+                print(f"occupied tiles: {self.occupied_tiles}")
                 # self.board.print_board()
                 # print("TILE Row",tile.row)
                 # print("TILE Col",tile.col)
@@ -105,7 +104,7 @@ class Game:
 game=Game()
 # game.singleton("4F")
 
-game.singleton("4E")
-game.singleton("5F")
-ans = game.founding(4,"F","4F",game.board)
-print(ans)
+game.singleton("E",4)
+# game.singleton("5F")
+# ans = game.founding(4,"F","4F",game.board)
+# print(ans)
