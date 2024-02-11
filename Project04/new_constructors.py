@@ -85,12 +85,13 @@ class Board:
             print(' '.join(map(str, row)))
 
 # Usage
-# board_data = {
-#     "tiles": [
-#         {"row": "A", "column": 1 },
-#         {"row": "B", "column": 2 },
-#         {"row": "B", "column": 3},
-#         {"row": "C", "column": 3}
+'''
+board_data = {
+    "tiles": [
+        {"row": "A", "column": 1 },
+        {"row": "B", "column": 2 },
+        {"row": "B", "column": 3},
+        {"row": "C", "column": 3}
 
 #     ],
 #     "hotels": [
@@ -99,5 +100,6 @@ class Board:
 #     ]
 # }
 
-# board = Board(board_data)
-# board.print_board()
+board = Board(board_data)
+board.print_board()
+'''

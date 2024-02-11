@@ -199,22 +199,79 @@ class Game:
         print(f"Tile added to {hotel_name}: {self.occupied_hotels}")
 
 
+    
+    def merging(self, row, col, label):
+        '''
+        1. check if valid name for merge h1 > h2
+        2. check if less than 11 for each
+        3. add to h1 tile list
+        4. return acquirer, acquired with list of hotel names
+        '''
+        tile = Tile(str(row), str(col))
+        row_index, col_index = tile.get_row_index(), tile.get_col_index()
+        neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up
+
+        for dr, dc in neighbors:
+            nr, nc = row_index + dr, col_index + dc
+            if 0 <= nr < self.board.rows and 0 <= nc < self.board.cols:
+                if (nr, nc) in self.occupied_tiles:  # Check if neighbor is part of a hotel
+                    if self.occupied_tiles[(nr, nc)] != label: #check to find adjacent chain
+                        hotel_name = self.occupied_tiles[(nr, nc)]  # Get the hotel name
+                        break            
+            
+        acquired_label = hotel_name                     
+        acquired_count = len(self.occupied_hotels[acquired_label])#len(self.occupied_hotels.get(acquired_label, [])) 
+        acquirer_count = len(self.occupied_hotels[label])#len(self.occupied_hotels.get(label, []))
+    
+        if acquired_count > acquirer_count:
+            raise ValueError("impossible: hotel you are trying to acquire is greater")
+            return {"impossible: hotel you are trying to acquire is greater"}
+        elif acquirer_count >= 11:
+            raise ValueError("impossible: Safe hotel found")
+            return {"impossible: Safe hotel found"}
+        elif acquired_count >= 11:
+            raise ValueError("impossible: Safe hotel found")
+            return {"impossible: Safe hotel found"}
+
+        self.occupied_hotels[label].extend(self.occupied_hotels[acquired_label])
+        self.occupied_hotels[label].extend((row_index, col_index)) 
+        self.occupied_tiles[acquired_label] = (row_index,col_index)
+        board.add_tile_to_board(Tile(row, col), None)
+        print(f"acquirer: {label}, acquired: {acquired_label}")
+        
 
 
 # To set up out board
 board_data = {
     "tiles": [
-        {"row": "A", "column": 1, "hotel_name": "Continental"},
-        {"row": "B", "column": 2, "hotel_name": None},
+        {"row": "B", "column": 2, "hotel_name": "Continental"},
         {"row": "B", "column": 3, "hotel_name": "Continental"}
+        ,{"row": "D", "column": 4, "hotel_name": "American"}
+        ,{"row": "D", "column": 3, "hotel_name": "American"}
+        ,{"row": "D", "column": 5, "hotel_name": "American"}
+
+        ,{"row": "D", "column": 6, "hotel_name": "American"}
+        ,{"row": "D", "column": 7, "hotel_name": "American"}
+        ,{"row": "D", "column": 8, "hotel_name": "American"}
+        
+        ,{"row": "D", "column": 9, "hotel_name": "American"}
+        ,{"row": "D", "column": 10, "hotel_name": "American"}
+        ,{"row": "D", "column": 11, "hotel_name": "American"}
     ],
     "hotels": [
-        {"hotel": "Continental", "tiles": [{"row": "A", "column": 1},{"row": "B", "column": 3}]}
+        {"hotel": "Continental", "tiles": [{"row": "B", "column": 3}, {"row": "B", "column": 2}]}
+        , {"hotel": "American", "tiles": [{"row": "D", "column": 4},{"row": "D", "column": 3},{"row": "D", "column": 5}
+        ,{"row": "D", "column": 6},{"row": "D", "column": 7},{"row": "D", "column": 8},{"row": "D", "column": 9}
+        ,{"row": "D", "column": 10},{"row": "D", "column": 11}]}
     ]
 }
 
 game=Game(board_data)
+board = Board(board_data)
+#board.print_board()
 # game.singleton("A",5)
+game.merging("C", 3, "American")
+board.print_board()
 
 
 
