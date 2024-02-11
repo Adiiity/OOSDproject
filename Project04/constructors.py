@@ -29,7 +29,12 @@ class Hotel:
             raise NameError("Hotel must be a valid chain!")
 
         self.hotel_name=hotel_name
-        self.tiles_list=[] #figure out how to do this? a list of tiles for each hotel chain
+
+        # dict to store hotels and the list of tiles associated with them.
+        self.occupied_hotels = {} 
+        
+        for hotels in hotelChains:
+            self.occupied_hotels[hotels] = []
 
 
     def found_hotel(self, hotel_name, tile):
@@ -42,7 +47,16 @@ class Hotel:
     def grow_hotel():
         # add a new tile to the list under the hotel name
         pass
+    def get_hotels_data(self,hotel_name,occupied_hotels):
+        # invalid hotel name.
+        if hotel_name not in occupied_hotels:
+            raise NameError("Hotel must be a valid chain!")
+        
+        return occupied_hotels[hotel_name]
+            
 
+        
+        
 
 class Tile:
     def __init__(self,label):
