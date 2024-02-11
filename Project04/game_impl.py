@@ -2,8 +2,8 @@ from constructors import Board,Tile,Hotel
 class Game:
     def __init__(self) -> None:
         self.board=Board()
-        self.occupied_tiles={}
-        self.occupied_hotels = {}
+        self.occupied_tiles=self.board.played_tiles.copy()
+        self.occupied_hotels = self.board.played_hotels.copy()
         self.availableHotels = Hotel.hotelChains
         # self.row=Tile.get_row_number()
         # self.col=Tile.get_col_number()
@@ -29,7 +29,7 @@ class Game:
                             print("Error: Tile is already played.")
         else:
               print("Error: Invalid Tile")
-        
+
 
     def founding(self,row,column,label, board):
         board = self.board.board_matrix
@@ -63,19 +63,19 @@ class Game:
             # print("GIVEN", current_row_num, current_col_num)
             # print("BOARD VALUE ", board[current_row_num][current_col_num])
             # print("Neighbor Tiles:",neighbour_tiles)
-            
-            
+
+
 # We must found a hotel if the neighbour single tiles are occupied. '0' tiles can be single as well, we must ignore it.
             occupied_neighbour = False
             for i,j in neighbour_tiles:
-                
+
                 row_index = i
                 column_index = j
                 # print(board[row_index][column_index])
                 if board[row_index][column_index] != 1:
                     print("THIS NEIGHBOUR IS NOT OCCUPIED YET. SO NO FOUNDING HOTEL")
                     # return {"error": "Hotels can be found next to singly occupied tiles only"}
-                    
+
                 else:
                     occupied_neighbour = True
                     isSingleTile =self.singleTile(row_index,column_index,delRow,delCol,board,total_rows,total_cols)
@@ -84,12 +84,12 @@ class Game:
                         print("Is a single tile")
                         # board[row][column] = 1
                         if label in self.availableHotels:
-                            
+
                             # make the given indices by user as tile
                             self.singleton(row,column)
                             # print(self.occupied_tiles)
                             if label not in self.occupied_hotels:
-                                # create a key with hotel name 
+                                # create a key with hotel name
                                 self.occupied_hotels[label] = []
                                 # add the given tile and the single tile to this key
                                 self.occupied_hotels[label].append((row_index,column_index))
@@ -103,8 +103,8 @@ class Game:
                                 letter_row = chr(letter_row_ascii_number)
                                 self.occupied_tiles[letter_row,column_index + 1] = label
                                 print(f" updated occupied tiles: {self.occupied_tiles}")
-                                
-                                
+
+
                                 # remove the label from available hotels
                                 self.availableHotels.remove(label)
 
@@ -143,7 +143,7 @@ class Game:
             if( next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols ):
                 if(board[next_row][next_col]!=0):
                     return False
-            
+
 
         return True
 
