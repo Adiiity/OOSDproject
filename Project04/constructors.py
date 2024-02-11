@@ -34,8 +34,8 @@ class Hotel:
         self.hotel_name=hotel_name
 
         # # dict to store hotels and the list of tiles associated with them.
-        # self.occupied_hotels = {} 
-        
+        # self.occupied_hotels = {}
+
         for hotels in self.hotelChains:
             self.occupied_hotels[hotels] = []
 
@@ -56,21 +56,15 @@ class Hotel:
             raise NameError("Hotel must be a valid chain!")
         print(f"The tiles associated  with {hotel_name} -> ",occupied_hotels[hotel_name])
         return occupied_hotels[hotel_name]
-            
 
-        
-        
+
+
+
 
 class Tile:
-    def __init__(self,label):
-        # self.row=row
-        # self.col=col
-        self.label = label
-        self.col = int(label[:-1])  # taking the number part
-        self.row = label[-1]  # taking the letter part
-
-    # def return_label(self):
-    #     return self.label
+    def __init__(self,row,col):
+        self.row=row
+        self.col=col
 
     def get_col_number(self):
 
