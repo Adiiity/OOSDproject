@@ -33,8 +33,8 @@ class Hotel:
 
         self.hotel_name=hotel_name
 
-        # dict to store hotels and the list of tiles associated with them.
-        self.occupied_hotels = {} 
+        # # dict to store hotels and the list of tiles associated with them.
+        # self.occupied_hotels = {} 
         
         for hotels in self.hotelChains:
             self.occupied_hotels[hotels] = []

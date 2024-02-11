@@ -3,6 +3,7 @@ class Game:
     def __init__(self) -> None:
         self.board=Board()
         self.occupied_tiles={}
+        self.occupied_hotels = {}
         self.availableHotels = Hotel.hotelChains
         # pass
 
