@@ -1,4 +1,4 @@
-from new_game import Game
+from game_impl import Game
 
 def process_request(json_request):
     request_type = json_request["request"]

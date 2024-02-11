@@ -1,27 +1,29 @@
-from constructors import Board,Tile,Hotel
+from new_constructors import Board,Tile,Hotel
 class Game:
-    def __init__(self) -> None:
-        self.board=Board()
+    def __init__(self,board_data) -> None:
+
+        self.board=Board(board_data)
+
         self.occupied_tiles=self.board.played_tiles.copy()
         self.occupied_hotels = self.board.played_hotels.copy()
-        self.availableHotels = Hotel.hotelChains
-        # self.row=Tile.get_row_number()
-        # self.col=Tile.get_col_number()
+        # self.availableHotels = Hotel.hotelChains
+        # self.row=Tile.get_row_index()
+        # self.col=Tile.get_col_index()
         # self.tile=Tile.create_tile()
-
 
     def singleton(self,row,col):
         # self.row=row
         tile = Tile(str(row), str(col))
-        row_index, col_index = tile.get_row_number(),tile.get_col_number()
+        row_index, col_index = tile.get_row_index(),tile.get_col_index()
         print(f"row: {row_index} col: {col_index}")
 
         if 0 <= row_index < self.board.rows and 0 <= col_index < self.board.cols:
             if self.board.board_matrix[row_index][col_index] == 0:  #checking if the tile is unoccupied
                 self.board.board_matrix[row_index][col_index] = 1
-                self.occupied_tiles[row,col] = "hotelname"  #for now just keeping the value as hotelnamme
+                self.occupied_tiles[row_index,col_index] = None  #for now just keeping the value as None
+                print("Singleton done")
                 print(f"occupied tiles: {self.occupied_tiles}")
-                # self.board.print_board()
+                self.board.print_board()
                 # print("TILE Row",tile.row)
                 # print("TILE Col",tile.col)
                 # print("TILE Label",tile.label)
@@ -36,8 +38,8 @@ class Game:
         total_rows = len(board)
         total_cols = len(board[0])
         tile=Tile(row,column)
-        current_row_num = tile.get_row_number()
-        current_col_num = tile.get_col_number()
+        current_row_num = tile.get_row_index()
+        current_col_num = tile.get_col_index()
 
         print(current_row_num,current_col_num)
         #  neighbors indices
@@ -150,29 +152,44 @@ class Game:
 
 
 
+# To set up out board
+board_data = {
+    "tiles": [
+        {"row": "A", "column": 1, "hotel_name": "Continental"},
+        {"row": "B", "column": 2, "hotel_name": None},
+        {"row": "B", "column": 3, "hotel_name": "Continental"}
+    ],
+    "hotels": [
+        {"hotel": "Continental", "tiles": [{"row": "A", "column": 1},{"row": "B", "column": 3}]}
+    ]
+}
+
+game=Game(board_data)
+game.singleton("A",5)
 
 
 
 
-game=Game()
-# game.singleton("4F")
+# game=Game()
+# # game.singleton("4F")
 
-game.singleton("E",4)
-# game.singleton("F",5)
-# Trying to found hotel around non existent neighbour tiles i.e 0 on all 4 sides
-# ans = game.founding("A",1,"American",game.board)
+# game.singleton("E",4)
+# # game.singleton("F",5)
+# # Trying to found hotel around non existent neighbour tiles i.e 0 on all 4 sides
+# # ans = game.founding("A",1,"American",game.board)
 
-# Trying to found hotel around existent  tiles i.e 1 on the given row,col
-# ans = game.founding("E",4,"American",game.board)
+# # Trying to found hotel around existent  tiles i.e 1 on the given row,col
+# # ans = game.founding("E",4,"American",game.board)
 
 
-# Trying to found hotel around an existent single neighbour tiles i.e atleast 1 neighbour is single who is alone
+# # Trying to found hotel around an existent single neighbour tiles i.e atleast 1 neighbour is single who is alone
+# # ans = game.founding("E",5,"American",game.board)
+# # print(ans)
+
+# #Trying to add a tile to a hotel lable that is not present in available hotels
+# # ans is added to the hotel chain AMERICAN
 # ans = game.founding("E",5,"American",game.board)
-# print(ans)
+# # Ans1 can not be added now since American wont be available
+# ans1 = game.founding("E",3,"American",game.board)
+# print(ans1)
 
-#Trying to add a tile to a hotel lable that is not present in available hotels
-# ans is added to the hotel chain AMERICAN
-ans = game.founding("E",5,"American",game.board)
-# Ans1 can not be added now since American wont be available
-ans1 = game.founding("E",3,"American",game.board)
-print(ans1)
