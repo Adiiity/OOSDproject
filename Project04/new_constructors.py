@@ -28,40 +28,22 @@ class Hotel:
             cls.played_hotels[hotel_name].append(tile_indices)
             cls.played_tiles[tile_indices] = hotel_name
 
-    # @classmethod
-    # def add_tile_to_hotel(cls, hotel_name, tile):
-    #     if hotel_name not in cls.valid_hotels:
-    #         raise ValueError(f"{hotel_name} is not a valid hotel name.")
-    #     tile_indices = (tile.get_row_index(), tile.get_col_index())
-    #     if hotel_name not in cls.played_hotels:
-    #         cls.played_hotels[hotel_name] = []
-    #     if tile_indices not in cls.played_hotels[hotel_name]:
-    #         cls.played_hotels[hotel_name].append(tile_indices)
-    #     cls.played_tiles[tile_indices] = hotel_name
-
     @classmethod
     def add_tile_to_hotel(cls, hotel_name, tile):
         if hotel_name not in cls.valid_hotels:
             raise ValueError(f"{hotel_name} is not a valid hotel name.")
 
-        # Convert tile to indices
         tile_indices = (tile.get_row_index(), tile.get_col_index())
 
-        # Check if the tile exists in played_tiles
         if tile_indices in cls.played_tiles:
-            # If the tile is associated with None, update to the given hotel_name
-            # Or if it already has a hotel, ensure consistency
+            # Update the hotel association for the tile
             cls.played_tiles[tile_indices] = hotel_name
-
-            # Ensure the hotel is registered in played_hotels and add the tile
             if hotel_name not in cls.played_hotels:
                 cls.played_hotels[hotel_name] = []
             if tile_indices not in cls.played_hotels[hotel_name]:
                 cls.played_hotels[hotel_name].append(tile_indices)
         else:
-            # If the tile does not exist in played_tiles, raise an error
             raise ValueError(f"Tile at {tile_indices} cannot be added to {hotel_name} because it is not on the board.")
-
 
 class Board:
     def __init__(self, board_data=None):
@@ -74,31 +56,29 @@ class Board:
             self.process_board_data(board_data)
 
     def process_board_data(self, board_data):
+        # Process tiles without hotel names
         for tile_data in board_data.get('tiles', []):
             tile = Tile(tile_data['row'], str(tile_data['column']))
-            self.add_tile_to_board(tile, tile_data.get('hotel_name'))
+            self.add_tile_to_board(tile, None)  # Initialize with hotel_name as None
+
+        # Process hotels separately to associate tiles with hotels
         for hotel_data in board_data.get('hotels', []):
             hotel_name = hotel_data['hotel']
             if hotel_name not in Hotel.valid_hotels:
                 raise ValueError(f"{hotel_name} is not a valid hotel name.")
             for tile_data in hotel_data.get('tiles', []):
                 tile = Tile(tile_data['row'], str(tile_data['column']))
-                Hotel.add_tile_to_hotel(hotel_name, tile)
-
-
+                Hotel.add_tile_to_hotel(hotel_name, tile)  # Associate tile with hotel
 
         print(f"played tiles :{self.played_tiles}")
         print(f"played hotels :{self.played_hotels}")
 
-    def add_tile_to_board(self, tile, hotel_name=None):
+    def add_tile_to_board(self, tile, hotel_name):
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
         self.board_matrix[row_index][col_index] = 1
-        self.played_tiles[(row_index, col_index)] = hotel_name
-
-    def is_tile_valid(self, row, col):
-        row_index = ord(row.upper()) - ord('A')
-        col_index = int(col) - 1
-        return 0 <= row_index < self.rows and 0 <= col_index < self.cols
+        # Initialize played_tiles with hotel_name as None for new tiles
+        if (row_index, col_index) not in self.played_tiles:
+            self.played_tiles[(row_index, col_index)] = hotel_name
 
     def print_board(self):
         for row in self.board_matrix:
@@ -107,10 +87,10 @@ class Board:
 # Usage
 board_data = {
     "tiles": [
-        {"row": "A", "column": 1, "hotel_name": "Continental"},
-        {"row": "B", "column": 2, "hotel_name": None},
-        {"row": "B", "column": 3, "hotel_name": "American"},
-        {"row": "C", "column": 3, "hotel_name": "American"}
+        {"row": "A", "column": 1 },
+        {"row": "B", "column": 2 },
+        {"row": "B", "column": 3},
+        {"row": "C", "column": 3}
 
     ],
     "hotels": [
