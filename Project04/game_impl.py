@@ -3,6 +3,7 @@ class Game:
     def __init__(self) -> None:
         self.board=Board()
         self.occupied_tiles={}
+        self.availableHotels = Hotel.hotelChains
         # pass
 
     def singleton(self,label):
@@ -33,6 +34,7 @@ class Game:
         tile=Tile(label)
         current_row_num = tile.get_row_number()
         current_col_num = tile.get_col_number()
+        
         #  neighbors indices 
         delRow = [ -1, 0, +1, 0 ]
         delCol = [ 0, +1, 0, -1 ]
@@ -46,22 +48,29 @@ class Game:
         else:
             neighbour_tiles = []
             for i in range(4):  
-                # the neighbours indices to check
+                # adding valid indices only to neighbor tiles
                 next_row =  current_row_num+delRow[i]
                 next_col =  current_col_num+delCol[i]
                 if(next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols):
-                    if board[next_row][next_col] != 0:
                         neighbour_tiles.append((next_row,next_col))
                         
             self.board.print_board()
+            print("GIVEN", current_row_num, current_col_num)
             print("Neighbor Tiles:",neighbour_tiles)
             
             
             for i,j in neighbour_tiles:
                 row = i
                 column = j
-                print(row,column)
+                isSingleTile =self.singleTile(row,column,delRow,delCol,board,total_rows,total_cols)
                 
+                if isSingleTile:
+                    board[row][column] = 1
+                    if label in self.availableHotels:
+                        print("Available Hotels: ",self.availableHotels)
+                        self.availableHotels.remove(label)
+                    else:
+                        print("hotel removed")
             
         
         
@@ -71,8 +80,16 @@ class Game:
             
             # if the hotel is not there just place the tile.
                     
-    def singleTile(self,row,column):
-        pass
+    def singleTile(self,row,column,delRow,delCol,board,total_rows,total_cols):
+        for i in range(4):  
+            next_row =  row+delRow[i]
+            next_col =  column+delCol[i]
+            if(next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols):
+                if(board[next_row][next_col]!=0):
+                    return False
+        
+        return True
+        
                       
              
              
@@ -81,7 +98,8 @@ class Game:
 
 
 game=Game()
-game.singleton("4F")
+# game.singleton("4F")
+
 game.singleton("4E")
 game.singleton("5F")
 ans = game.founding(4,"F","4F",game.board)

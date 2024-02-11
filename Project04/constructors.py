@@ -19,13 +19,16 @@ class Board:
 
 
 class Hotel:
-    def __init__(self,hotel_name) -> None:
-        #valid hotel names
-        hotelChains = ["American", "Continental", "Festival", "Imperial",
+    hotelChains = ["American", "Continental", "Festival", "Imperial",
         "Sackson", "Tower", "Worldwide"]
 
+    def __init__(self,hotel_name) -> None:
+        #valid hotel names
+        # self.hotelChains = ["American", "Continental", "Festival", "Imperial",
+        # "Sackson", "Tower", "Worldwide"]
+
         #Check for name before creating
-        if hotel_name not in hotelChains:
+        if hotel_name not in self.hotelChains:
             raise NameError("Hotel must be a valid chain!")
 
         self.hotel_name=hotel_name
@@ -33,7 +36,7 @@ class Hotel:
         # dict to store hotels and the list of tiles associated with them.
         self.occupied_hotels = {} 
         
-        for hotels in hotelChains:
+        for hotels in self.hotelChains:
             self.occupied_hotels[hotels] = []
 
 
