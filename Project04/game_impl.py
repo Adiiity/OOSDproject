@@ -21,7 +21,7 @@ class Game:
                 self.board.board_matrix[row_index][col_index] = 1
                 self.occupied_tiles[row,col] = "hotelname"  #for now just keeping the value as hotelnamme
                 print(f"occupied tiles: {self.occupied_tiles}")
-                # self.board.print_board()
+                self.board.print_board()
                 # print("TILE Row",tile.row)
                 # print("TILE Col",tile.col)
                 # print("TILE Label",tile.label)
@@ -35,10 +35,11 @@ class Game:
         board = self.board.board_matrix
         total_rows = len(board)
         total_cols = len(board[0])
-        tile=Tile(label)
+        tile=Tile(row,column)
         current_row_num = tile.get_row_number()
         current_col_num = tile.get_col_number()
 
+        print(current_row_num,current_col_num)
         #  neighbors indices
         delRow = [ -1, 0, +1, 0 ]
         delCol = [ 0, +1, 0, -1 ]
@@ -46,7 +47,7 @@ class Game:
 
         # task 1: Check if the given grid is empty else return error.
         if(board[current_row_num][current_col_num] ==1):
-            return "Tile is already occupied"
+            return {"error":"Tile is already occupied"}
 
         #  TASK 2: check if there is  any tile as neighbor to the given grid.
         else:
@@ -59,22 +60,50 @@ class Game:
                         neighbour_tiles.append((next_row,next_col))
 
             self.board.print_board()
-            print("GIVEN", current_row_num, current_col_num)
-            print("Neighbor Tiles:",neighbour_tiles)
+            # print("GIVEN", current_row_num, current_col_num)
+            # print("BOARD VALUE ", board[current_row_num][current_col_num])
+            # print("Neighbor Tiles:",neighbour_tiles)
 
 
             for i,j in neighbour_tiles:
-                row = i
-                column = j
-                isSingleTile =self.singleTile(row,column,delRow,delCol,board,total_rows,total_cols)
-
+                row_index = i
+                column_index = j
+                if board[row_index][column_index] != 1:
+                    print("THIS NEIGHBOUR IS NOT OCCUPIED YET. SO NO FOUNDING HOTEL")
+                    return {"error": "Hotels can be found next to singly occupied tiles only"}
+                    # continue 
+                isSingleTile =self.singleTile(row_index,column_index,delRow,delCol,board,total_rows,total_cols)
+                # print("BOARD VALUE ", board[current_row_num][current_col_num])
                 if isSingleTile:
-                    board[row][column] = 1
+                    print("Is a single tile")
+                    # board[row][column] = 1
                     if label in self.availableHotels:
-                        print("Available Hotels: ",self.availableHotels)
-                        self.availableHotels.remove(label)
-                    else:
-                        print("hotel removed")
+                        
+                        # make the given indices by user as tile
+                        self.singleton(row,column)
+                        # print(self.occupied_tiles)
+                        if label not in self.occupied_hotels:
+                            # create a key with hotel name 
+                            self.occupied_hotels[label] = []
+                            # add the given tile and the single tile to this key
+                            self.occupied_hotels[label].append((row_index,column_index))
+                            self.occupied_hotels[label].append((row,column))
+                            # remove the label from available hotels
+                            self.availableHotels.remove(label)
+
+                        self.board.print_board
+                        # print("Available Hotels: ",self.availableHotels)
+                        # print("Occupied Hotels:",self.occupied_hotels)
+                        # print( "founding fucntion ends Hotel added")
+                        return "founding"
+                # If there are no available hotel chains, the player can place the tile but cannot found a new hotel
+                elif label not in self.availableHotels:
+                    # print("The given hotel label is not present in the available hotel chains. So adding tile only")
+                    # we create and place the tile
+                    self.singleton(row,column)
+                    # print("founding fucntion ends Just tile added")
+                    return "singleton"
+
 
 
 
@@ -85,12 +114,17 @@ class Game:
             # if the hotel is not there just place the tile.
 
     def singleTile(self,row,column,delRow,delCol,board,total_rows,total_cols):
+        # print("SINGLE TILE FUNCTION")
+        # print("INDICES",row,column)
+        # print("CURRENT GRID NEIGHBOUR VALUE",board[row][column])
         for i in range(4):
             next_row =  row+delRow[i]
             next_col =  column+delCol[i]
-            if(next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols):
+            print("NEIGHBOUR", board[next_row][next_col])
+            if( next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols ):
                 if(board[next_row][next_col]!=0):
                     return False
+            
 
         return True
 
@@ -105,6 +139,9 @@ game=Game()
 # game.singleton("4F")
 
 game.singleton("E",4)
-# game.singleton("5F")
-# ans = game.founding(4,"F","4F",game.board)
-# print(ans)
+# game.singleton("F",5)
+# ans = game.founding("A",1,"American",game.board)
+ans = game.founding("E",4,"American",game.board)
+# ans = game.founding("E",5,"American",game.board)
+print(ans)
+# ans = game.founding("E",3,"American",game.board)
