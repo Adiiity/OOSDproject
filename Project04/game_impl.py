@@ -8,7 +8,7 @@ class Game:
         # self.row=Tile.get_row_number()
         # self.col=Tile.get_col_number()
         # self.tile=Tile.create_tile()
-        # pass
+
 
     def singleton(self,row,col):
         # self.row=row
@@ -29,7 +29,7 @@ class Game:
                             print("Error: Tile is already played.")
         else:
               print("Error: Invalid Tile")
-        pass
+        
 
     def founding(self,row,column,label, board):
         board = self.board.board_matrix
