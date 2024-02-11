@@ -28,16 +28,40 @@ class Hotel:
             cls.played_hotels[hotel_name].append(tile_indices)
             cls.played_tiles[tile_indices] = hotel_name
 
+    # @classmethod
+    # def add_tile_to_hotel(cls, hotel_name, tile):
+    #     if hotel_name not in cls.valid_hotels:
+    #         raise ValueError(f"{hotel_name} is not a valid hotel name.")
+    #     tile_indices = (tile.get_row_index(), tile.get_col_index())
+    #     if hotel_name not in cls.played_hotels:
+    #         cls.played_hotels[hotel_name] = []
+    #     if tile_indices not in cls.played_hotels[hotel_name]:
+    #         cls.played_hotels[hotel_name].append(tile_indices)
+    #     cls.played_tiles[tile_indices] = hotel_name
+
     @classmethod
     def add_tile_to_hotel(cls, hotel_name, tile):
         if hotel_name not in cls.valid_hotels:
             raise ValueError(f"{hotel_name} is not a valid hotel name.")
+
+        # Convert tile to indices
         tile_indices = (tile.get_row_index(), tile.get_col_index())
-        if hotel_name not in cls.played_hotels:
-            cls.played_hotels[hotel_name] = []
-        if tile_indices not in cls.played_hotels[hotel_name]:
-            cls.played_hotels[hotel_name].append(tile_indices)
-        cls.played_tiles[tile_indices] = hotel_name
+
+        # Check if the tile exists in played_tiles
+        if tile_indices in cls.played_tiles:
+            # If the tile is associated with None, update to the given hotel_name
+            # Or if it already has a hotel, ensure consistency
+            cls.played_tiles[tile_indices] = hotel_name
+
+            # Ensure the hotel is registered in played_hotels and add the tile
+            if hotel_name not in cls.played_hotels:
+                cls.played_hotels[hotel_name] = []
+            if tile_indices not in cls.played_hotels[hotel_name]:
+                cls.played_hotels[hotel_name].append(tile_indices)
+        else:
+            # If the tile does not exist in played_tiles, raise an error
+            raise ValueError(f"Tile at {tile_indices} cannot be added to {hotel_name} because it is not on the board.")
+
 
 class Board:
     def __init__(self, board_data=None):
@@ -60,19 +84,11 @@ class Board:
             for tile_data in hotel_data.get('tiles', []):
                 tile = Tile(tile_data['row'], str(tile_data['column']))
                 Hotel.add_tile_to_hotel(hotel_name, tile)
-        # if played_hotels and played_tiles are not in sync than returns ERROR
-        for hotel_name, tiles in self.played_hotels.items():
-        # Find all tiles associated with this hotel in played_tiles
-            associated_tiles = [tile for tile, name in self.played_tiles.items() if name == hotel_name]
-
-            # Update the played_hotels entry for this hotel if the counts differ
-            if len(associated_tiles) != len(tiles):
-                print("ERROR")
-                return
 
 
-        # print(f"played tiles :{self.played_tiles}")
-        # print(f"played hotels :{self.played_hotels}")
+
+        print(f"played tiles :{self.played_tiles}")
+        print(f"played hotels :{self.played_hotels}")
 
     def add_tile_to_board(self, tile, hotel_name=None):
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
@@ -89,16 +105,19 @@ class Board:
             print(' '.join(map(str, row)))
 
 # Usage
-# board_data = {
-#     "tiles": [
-#         {"row": "A", "column": 1, "hotel_name": "Continental"},
-#         {"row": "B", "column": 2, "hotel_name": None},
-#         {"row": "B", "column": 3, "hotel_name": "Continental"}
-#     ],
-#     "hotels": [
-#         {"hotel": "Continental", "tiles": [{"row": "A", "column": 1},{"row": "B", "column": 3}]}
-#     ]
-# }
+board_data = {
+    "tiles": [
+        {"row": "A", "column": 1, "hotel_name": "Continental"},
+        {"row": "B", "column": 2, "hotel_name": None},
+        {"row": "B", "column": 3, "hotel_name": "American"},
+        {"row": "C", "column": 3, "hotel_name": "American"}
 
-# board = Board(board_data)
-# board.print_board()
+    ],
+    "hotels": [
+        {"hotel": "Continental", "tiles": [{"row": "A", "column": 1}]},
+        {"hotel": "American", "tiles": [{"row": "B", "column": 3},{"row": "C", "column": 3}]},
+    ]
+}
+
+board = Board(board_data)
+board.print_board()
