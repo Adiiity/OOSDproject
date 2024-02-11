@@ -167,30 +167,6 @@ class Game:
 
         return True
 
-    # def growing(self, row, col, hotel_name):
-    #     tile = Tile(str(row), str(col))
-    #     row_index, col_index = tile.get_row_index(), tile.get_col_index()
-
-    #     # Determine if the tile is next to an existing hotel
-    #     neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up
-    #     for dr, dc in neighbors:
-    #         nr, nc = row_index + dr, col_index + dc
-    #         if 0 <= nr < self.board.rows and 0 <= nc < self.board.cols:
-    #             if (nr, nc) in self.occupied_tiles:  # Check if neighbor is part of a hotel
-    #                 hotel_name = self.occupied_tiles[(nr, nc)]  # Get the hotel name
-    #                 break
-
-    #     # Add the new tile to the hotel if adjacent to an existing hotel
-    #     if hotel_name:
-    #         self.board.board_matrix[row_index][col_index] = 1
-    #         if hotel_name in self.occupied_hotels:
-    #             self.occupied_hotels[hotel_name].append((row_index, col_index))
-    #         else:
-    #             self.occupied_hotels[hotel_name] = [(row, col)]
-    #         print(f"Tile added to {hotel_name}: {self.occupied_hotels}")
-    #     else:
-    #         print("Tile does not grow any hotel.")
-
     def growing(self, row, col, hotel_name):
         tile = Tile(str(row), str(col))
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
