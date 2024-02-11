@@ -79,3 +79,7 @@ class Tile:
 
         board_row_number = ascii_value-ascii_value_A
         return board_row_number
+
+    def create_tile(self):
+        # Returns a tuple (row,col)
+        return (self.get_row_number(), self.get_col_number())
