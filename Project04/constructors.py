@@ -51,7 +51,7 @@ class Hotel:
         # invalid hotel name.
         if hotel_name not in occupied_hotels:
             raise NameError("Hotel must be a valid chain!")
-        
+        print(f"The tiles associated  with {hotel_name} -> ",occupied_hotels[hotel_name])
         return occupied_hotels[hotel_name]
             
 
