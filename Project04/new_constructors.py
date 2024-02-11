@@ -71,8 +71,8 @@ class Board:
                 return
 
 
-        print(f"played tiles :{self.played_tiles}")
-        print(f"played hotels :{self.played_hotels}")
+        # print(f"played tiles :{self.played_tiles}")
+        # print(f"played hotels :{self.played_hotels}")
 
     def add_tile_to_board(self, tile, hotel_name=None):
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
