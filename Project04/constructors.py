@@ -1,15 +1,21 @@
 class Board:
-    def __init__(self, rows, cols) -> None:
-        self.rows=rows
-        self.cols=cols
-        self.board_matrix=[]
-        pass
+    def __init__(self):
+        self.rows = 9
+        self.cols = 12
+        self.board_matrix = self.init_board()
 
-        for row in range(rows):
-            row_list=[]
-            for col in range(cols):
-                row_list.append("0")
-            self.board_matrix.append(row_list)
+    def init_board(self):
+        board_matrix = []
+        for row in range(self.rows):
+            row_list = []
+            for col in range(self.cols):
+                row_list.append(0)
+            board_matrix.append(row_list)
+        return board_matrix
+
+    def print_board(self):
+        for row in self.board_matrix:
+            print(' '.join(map(str, row)))
 
 
 class Hotel:
@@ -39,22 +45,26 @@ class Hotel:
 
 
 class Tile:
-    def __init__(self,row :int,col :str):
-        self.row=row
-        self.col=col
+    def __init__(self,label):
+        # self.row=row
+        # self.col=col
+        self.label = label
+        self.col = int(label[:-1])  # taking the number part
+        self.row = label[-1]  # taking the letter part
 
-        
-    def get_row_number(self,row :int):
-        
-        
-        board_row_number = row - 1
-        return board_row_number
-    
-    def get_col_number(self,col :str):
-        
-        ascii_value = ord(col[0])
-        ascii_value_A = ord('A')
-        
-        board_col_number = ascii_value-ascii_value_A
+    # def return_label(self):
+    #     return self.label
+
+    def get_col_number(self):
+
+
+        board_col_number = self.col - 1
         return board_col_number
-        
+
+    def get_row_number(self):
+
+        ascii_value = ord(self.row[0])
+        ascii_value_A = ord('A')
+
+        board_row_number = ascii_value-ascii_value_A
+        return board_row_number
