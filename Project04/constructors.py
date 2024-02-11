@@ -41,7 +41,7 @@ class Hotel:
 
 
     def found_hotel(self, hotel_name, tile):
-        hotel = hotel_name
+        pass
 
 
     def merge_hotel():
