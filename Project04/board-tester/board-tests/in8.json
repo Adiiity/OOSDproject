@@ -1,0 +1,25 @@
+{
+  "request": "merging",
+  "row": "B",
+  "column": 3,
+  "label": "Continental",
+  "board": {
+    "tiles": [
+      { "row": "B", "column": 1 },
+      { "row": "B", "column": 2 },
+      { "row": "C", "column": 3 },
+      { "row": "A", "column": 3 }
+    ],
+    "hotels": [
+      {
+        "hotel": "Continental",
+        "tiles": [
+          { "row": "B", "column": 2 },
+          { "row": "B", "column": 1 }
+        ]
+      },
+      { "hotel": "American", "tiles": [{ "row": "C", "column": 3 }] },
+      { "hotel": "Imperial", "tiles": [{ "row": "A", "column": 3 }] }
+    ]
+  }
+}

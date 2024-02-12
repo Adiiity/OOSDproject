@@ -11,7 +11,7 @@ def validate_request(request_data):
     if request_data['request'] in ['singleton', 'growing', 'founding', 'merging']:
         if 'row' not in request_data or 'column' not in request_data:
             raise ValueError("Missing 'row' or 'column' field for this request type.")
-    if request_data['request'] in ['growing', 'founding', 'merging']:
+    if request_data['request'] in [ 'founding', 'merging']:
         if 'label' not in request_data:
             raise ValueError("Missing 'label' field for this request type.")
 
@@ -37,6 +37,7 @@ def process_request(json_request):
             # print("response", response)
         elif request_type == "growing":
             response = game.growing(row, column)
+            return response
         elif request_type == "founding":
             
             # print(row, column, label, game.board.board_matrix)  
@@ -45,6 +46,7 @@ def process_request(json_request):
             return response
         elif request_type == "merging":
             response = game.merging(row, column, label)
+            return response
         else:
             raise ValueError("Unhandled request type.")
 
@@ -58,10 +60,9 @@ def read_json_file(file_path):
         return file.read()
 
 # Path to the JSON file
-# file_path = '/request.json'
 
 # Read and process the JSON request from file
-json_request = read_json_file('request.json')
-response = process_request(json_request)
-print(response)
+# json_request = read_json_file('request.json')
+# response = process_request(json_request)
+# print(response)
 

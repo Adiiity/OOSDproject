@@ -289,7 +289,7 @@ class Game:
         acquirer_label = max(neighbor_hotels, key=lambda hotel: len(self.board.played_hotels[hotel]) if hotel else 0)
         if not acquirer_label or acquirer_label != input_label:
             # print("error")
-            return {"impossible": "Input label does not match the acquirer label or no valid merger found.", "error": "Mismatch in labels or safe hotel present."}
+            return {"impossible": "Input label does not match the acquirer label or no valid merger found."}
 
         acquired_labels = [hotel for hotel in neighbor_hotels if hotel and hotel != acquirer_label]
 
