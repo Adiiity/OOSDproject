@@ -1,0 +1,6 @@
+Founding:
+1. Add a founding request to grids whose neighbors are empty.
+2. Add a founding request to grids that has atleast one single neighbor.
+3. Add a founding request to grids that are already occupied.
+4. Add a founding request to grids that has single neighbor but the hotel label is not available.
+5. Trying to add a tile to a hotel lable that is not present in available hotels
