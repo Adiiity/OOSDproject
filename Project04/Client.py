@@ -1,50 +1,59 @@
+import json
 from game_impl import Game
 
+def validate_request(request_data):
+    """Validate the incoming request data for required fields."""
+    if 'request' not in request_data:
+        raise ValueError("Missing 'request' field.")
+    if request_data['request'] not in ['query', 'singleton', 'growing', 'founding', 'merging']:
+        raise ValueError("Invalid 'request' field.")
+
+    if request_data['request'] in ['singleton', 'growing', 'founding', 'merging']:
+        if 'row' not in request_data or 'column' not in request_data:
+            raise ValueError("Missing 'row' or 'column' field for this request type.")
+    if request_data['request'] in ['growing', 'founding', 'merging']:
+        if 'label' not in request_data:
+            raise ValueError("Missing 'label' field for this request type.")
+
 def process_request(json_request):
-    request_type = json_request["request"]
-    row = json_request.get("row")
-    column = json_request.get("column")
-    label = json_request.get("label")
+    try:
+        request_data = json.loads(json_request)
+        validate_request(request_data)
 
-    # Initialize the Game instance (assuming Game class can handle board setup internally)
-    game = Game()  # Adjust if Game needs to be initialized with board_data
+        game = Game(board_data=None)  # Adjust initialization as needed
 
-    # Route the request to the appropriate Game method
-    if request_type == "inspect":
-        # Assuming there is an inspect method in Game to handle this
-        return game.inspect_tile(row, column)
-    elif request_type == "singleton":
-        return game.singleton(row, column)  # Assuming singleton modifies the game state and returns a result
-    elif request_type == "growing":
-        return game.growing(row, column, label)  # label used for growing might represent the hotel name
-    elif request_type == "founding":
-        return game.founding(row, column, label)  # Found a new hotel at the specified location
-    elif request_type == "merging":
-        # Assuming there is a merge method in Game to handle this
-        return game.merge_hotels(row, column, label)  # Merge hotels based on some logic
-    else:
-        raise ValueError("Invalid request type.")
+        request_type = request_data['request']
+        row = request_data.get('row')
+        column = request_data.get('column')
+        label = request_data.get('label')
 
-def initialize_board(board_data):
-    # Initialize and return a Board object based on `board_data`
-    pass
+        if request_type == "query":
+            response = game.inspect(row, column)
+        elif request_type == "singleton":
+            response = game.singleton(row, column)
+        elif request_type == "growing":
+            response = game.growing(row, column, label)
+        elif request_type == "founding":
+            response = game.founding(row, column, label, game.board.board_matrix)  # Pass necessary params
+        elif request_type == "merging":
+            response = game.merging(row, column, label)
+        else:
+            raise ValueError("Unhandled request type.")
 
-def inspect_tile(board, row, column):
-    # Logic to inspect a tile on the board
-    pass
+        return json.dumps({response})
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
-def create_singleton(board, row, column):
-    # Logic to handle a singleton operation
-    pass
+def read_json_file(file_path):
+    """Reads a JSON file and returns its content as a dictionary."""
+    with open(file_path, 'r') as file:
+        return file.read()
 
-def grow_hotel(board, row, column):
-    # Logic to grow a hotel chain
-    pass
+# Path to the JSON file
+# file_path = '/request.json'
 
-def found_hotel(board, row, column, label):
-    # Logic to found a new hotel
-    pass
+# Read and process the JSON request from file
+json_request = read_json_file('/Users/aditithakkar/Desktop/personal_oosd/OOSDproject/Project04/request.json')
+response = process_request(json_request)
+print(response)
 
-def merge_hotels(board, row, column, label):
-    # Logic for merging hotels
-    pass

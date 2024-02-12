@@ -13,7 +13,7 @@ class Game:
         for hotel in self.availableHotels:
             if hotel not in self.occupied_hotels:
                 copyAvailableHotels.append(hotel)
-        
+
         self.availableHotels = copyAvailableHotels
 
         # print("STATE AFTER UPDATE",self.availableHotels)
@@ -44,7 +44,7 @@ class Game:
 
 
     def founding(self,row,column,label, board):
-        
+
 
         game_board = self.board.board_matrix
         total_rows = len(game_board)
@@ -98,13 +98,13 @@ class Game:
                     print("Available HOTElS befor check", self.availableHotels)
                     if isSingleTile:
                         print("Is a single tile")
-                       
+
                         # board[row][column] = 1
                         if label in self.availableHotels:
-                            
+
                             # make the given indices by user as tile
                             self.singleton(row,column)
-                            
+
                             # print(self.occupied_tiles)
                             if label not in self.occupied_hotels:
                                 # create a key with hotel name
@@ -198,47 +198,105 @@ class Game:
         print(f"Occupied tiles update: {self.occupied_tiles}")
         print(f"Tile added to {hotel_name}: {self.occupied_hotels}")
 
+    # def inspect
+    def inspect(self, row, col):
+        acquirer_label = None
+        acquired_labels = None
+        tile = Tile(row, col)
+        row_index, col_index = tile.get_row_index(), tile.get_col_index()
+        tile_tuple = (row_index, col_index)
+
+        # Get orthogonal neighbors
+        neighbors = [
+            (row_index - 1, col_index),  # Up
+            (row_index + 1, col_index),  # Down
+            (row_index, col_index - 1),  # Left
+            (row_index, col_index + 1)   # Right
+        ]
+
+        # Filter valid neighbors within the board boundaries
+        valid_neighbors = [(r, c) for r, c in neighbors if 0 <= r < self.board.rows and 0 <= c < self.board.cols]
+
+        if not valid_neighbors:
+            self.singleton(row, col)
+            print("singleton")
+        elif len(valid_neighbors) == 1:
+            neighbor_row, neighbor_col = valid_neighbors[0]
+            neighbor_hotel = self.occupied_tiles.get((neighbor_row, neighbor_col))
+            if neighbor_hotel in self.occupied_hotels:
+                self.growing(row, col, neighbor_hotel)
+                print({"growing": neighbor_hotel})
+            else:
+                # self.founding(row, col, "New Hotel", self.board.board_matrix)
+                print("founding")
+
+        elif len(valid_neighbors) >= 2:
+            neighbor_hotels = [self.occupied_tiles.get(neighbor) for neighbor in valid_neighbors if self.occupied_tiles.get(neighbor)]
+            unique_neighbor_hotels = list(set(neighbor_hotels))
+
+            safe_hotels = [hotel for hotel in unique_neighbor_hotels if len(self.occupied_hotels[hotel]) >= 11]
+            if safe_hotels:
+                print({"impossible": "Cannot merge with a safe hotel."})
+                return {"impossible": "Cannot merge with a safe hotel."}
+            if len(unique_neighbor_hotels) == 0:  # Added this condition to handle the case when there are no valid hotels
+                # No valid hotels among neighbors
+                # self.singleton(row, col)
+                print("singleton inspect")
+            elif len(unique_neighbor_hotels) == 1:
+                # All neighbors belong to the same hotel
+                acquirer_label = unique_neighbor_hotels[0]
+                print({"growing": acquirer_label})
+
+            else:
+                # Different hotels among neighbors, determine acquirer and acquired
+                acquirer_label = max(unique_neighbor_hotels, key=lambda x: len(self.occupied_hotels.get(x, [])))
+                acquired_labels = [hotel for hotel in unique_neighbor_hotels if hotel != acquirer_label]
+
+            # self.merge(row, col)
+            print({"acquirer": acquirer_label, "acquired": acquired_labels})
 
 
 
 # To set up out board
+# board_data = {
+#     "tiles": [
+#         {"row": "A", "column": 2},
+#         {"row": "B", "column": 2},
+#         {"row": "C", "column": 1}
+
+#     ],
+#     "hotels": [
+#         {"hotel": "Continental", "tiles": [{"row": "A", "column": 2},{"row": "B", "column": 2}]},
+#         {"hotel": "American", "tiles": [{"row": "C", "column": 1}]}
+
+#     ]
+# }
 board_data = {
     "tiles": [
-        {"row": "A", "column": 1, "hotel_name": "Continental"},
-        {"row": "B", "column": 2, "hotel_name": None},
-        {"row": "B", "column": 3, "hotel_name": "Continental"}
+        # Tiles for "Continental" making it a safe hotel with 11 tiles
+        {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
+        {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
+        {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
+        {"row": "A", "column": 2}, {"row": "B", "column": 2},
+        # Tiles for "American"
+        {"row": "D", "column": 3}, {"row": "E", "column": 3}
     ],
     "hotels": [
-        {"hotel": "Continental", "tiles": [{"row": "A", "column": 1},{"row": "B", "column": 3}]}
+        {"hotel": "Continental", "tiles": [
+            {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
+            {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
+            {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
+            {"row": "A", "column": 2}, {"row": "B", "column": 2}
+        ]},
+        {"hotel": "American", "tiles": [
+            {"row": "D", "column": 3}, {"row": "E", "column": 3}
+        ]}
     ]
 }
 
+
+# board_data={}
 game=Game(board_data)
-# game.singleton("A",5)
 
-
-
-
-# game=Game()
-# # game.singleton("4F")
-
-game.singleton("E",4)
-# # game.singleton("F",5)
-# # Trying to found hotel around non existent neighbour tiles i.e 0 on all 4 sides
-# # ans = game.founding("A",1,"American",game.board)
-
-# # Trying to found hotel around existent  tiles i.e 1 on the given row,col
-# # ans = game.founding("E",4,"American",game.board)
-
-
-# # Trying to found hotel around an existent single neighbour tiles i.e atleast 1 neighbour is single who is alone
-ans = game.founding("E",5,"Sackson",game.board)
-print(ans)
-
-# #Trying to add a tile to a hotel lable that is not present in available hotels
-# # ans is added to the hotel chain AMERICAN
-# ans = game.founding("E",5,"American",game.board)
-# # Ans1 can not be added now since American wont be available
-# ans1 = game.founding("E",3,"American",game.board)
-# print(ans1)
+game.inspect("C",2)
 
