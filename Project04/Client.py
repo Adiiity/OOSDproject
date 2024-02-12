@@ -20,7 +20,8 @@ def process_request(json_request):
         request_data = json.loads(json_request)
         validate_request(request_data)
 
-        game = Game(board_data=None)  # Adjust initialization as needed
+        board_data = request_data.get('board')
+        game = Game(board_data)  # Adjust initialization as needed
 
         request_type = request_data['request']
         row = request_data.get('row')
@@ -29,18 +30,25 @@ def process_request(json_request):
 
         if request_type == "query":
             response = game.inspect(row, column)
+            return response
         elif request_type == "singleton":
             response = game.singleton(row, column)
+            return response
+            # print("response", response)
         elif request_type == "growing":
-            response = game.growing(row, column, label)
+            response = game.growing(row, column)
         elif request_type == "founding":
+            
+            # print(row, column, label, game.board.board_matrix)  
             response = game.founding(row, column, label, game.board.board_matrix)  # Pass necessary params
+            # print(response)
+            return response
         elif request_type == "merging":
             response = game.merging(row, column, label)
         else:
             raise ValueError("Unhandled request type.")
 
-        return json.dumps({response})
+        # return json.dumps({response})
     except Exception as e:
         return json.dumps({"error": str(e)})
 
@@ -53,7 +61,7 @@ def read_json_file(file_path):
 # file_path = '/request.json'
 
 # Read and process the JSON request from file
-json_request = read_json_file('/Users/aditithakkar/Desktop/personal_oosd/OOSDproject/Project04/request.json')
+json_request = read_json_file('request.json')
 response = process_request(json_request)
 print(response)
 

@@ -37,6 +37,7 @@ class Game:
                 # print("TILE Row",tile.row)
                 # print("TILE Col",tile.col)
                 # print("TILE Label",tile.label)
+                return "singleton"
             else:
                 print("Error: Tile is already played.")
         else:
@@ -44,16 +45,16 @@ class Game:
 
 
     def founding(self,row,column,label, board):
-
-
-        game_board = self.board.board_matrix
+        # self.board.print_board()
+        # print("BOARD",board)
+        game_board = board
         total_rows = len(game_board)
         total_cols = len(game_board[0])
         tile=Tile(row,column)
         current_row_num = tile.get_row_index()
         current_col_num = tile.get_col_index()
 
-        print(current_row_num,current_col_num)
+        # print(current_row_num,current_col_num)
         #  neighbors indices
         delRow = [ -1, 0, +1, 0 ]
         delCol = [ 0, +1, 0, -1 ]
@@ -87,17 +88,18 @@ class Game:
                 column_index = j
                 # print(board[row_index][column_index])
                 if game_board[row_index][column_index] != 1:
-                    print("THIS NEIGHBOUR IS NOT OCCUPIED YET. SO NO FOUNDING HOTEL")
+                    continue
+                    # print("THIS NEIGHBOUR IS NOT OCCUPIED YET. SO NO FOUNDING HOTEL")
                     # return {"error": "Hotels can be found next to singly occupied tiles only"}
 
                 else:
                     occupied_neighbour = True
                     isSingleTile =self.singleTile(row_index,column_index,delRow,delCol,game_board,total_rows,total_cols)
                     # print("BOARD VALUE ", board[current_row_num][current_col_num])
-                    print("OCCUPIED HOTElS befor check", self.occupied_hotels)
-                    print("Available HOTElS befor check", self.availableHotels)
+                    # print("OCCUPIED HOTElS befor check", self.occupied_hotels)
+                    # print("Available HOTElS befor check", self.availableHotels)
                     if isSingleTile:
-                        print("Is a single tile")
+                        # print("Is a single tile")
 
                         # board[row][column] = 1
                         if label in self.availableHotels:
@@ -114,7 +116,7 @@ class Game:
                                 # add the given tile and the single tile to this key
                                 self.occupied_hotels[label].append((letter_row,column_index + 1))
                                 self.occupied_hotels[label].append((row,column))
-                                print(f" updated occupied hotels: {self.occupied_hotels}")
+                                # print(f" updated occupied hotels: {self.occupied_hotels}")
                                 # change occupied tiles as well. add hotel label now
                                 # self.occupied_tiles[row_index,column_index] = label
                                 # update given row and col
@@ -122,13 +124,13 @@ class Game:
                                 # update teh single neighbour tile
 
                                 self.occupied_tiles[letter_row,column_index + 1] = label
-                                print(f" updated occupied tiles: {self.occupied_tiles}")
+                                # print(f" updated occupied tiles: {self.occupied_tiles}")
 
 
                                 # remove the label from available hotels
                                 self.availableHotels.remove(label)
 
-                            self.board.print_board()
+                            # self.board.print_board()
                             # print("Available Hotels: ",self.availableHotels)
                             # print("Occupied Hotels:",self.occupied_hotels)
                             # print( "founding fucntion ends Hotel added")
@@ -139,11 +141,12 @@ class Game:
                         # we create and place the tile
                         self.singleton(row,column)
                         # print("founding fucntion ends Just tile added")
-                        self.board.print_board()
-                        return "singleton"
+                        # self.board.print_board()
+                        # return "singleton"
+                        return
 
             if occupied_neighbour == False:
-                self.board.print_board()
+                # self.board.print_board()
                 return {"error": "Hotels can be found next to singly occupied tiles only"}
 
             #  get the list of hotel chains from hotel class.
@@ -159,7 +162,7 @@ class Game:
         for i in range(4):
             next_row =  row+delRow[i]
             next_col =  column+delCol[i]
-            print("NEIGHBOUR", game_board[next_row][next_col])
+            # print("NEIGHBOUR", game_board[next_row][next_col])
             if( next_row>=0 and next_row<total_rows and next_col>=0 and next_col<total_cols ):
                 if(game_board[next_row][next_col]!=0):
                     return False
@@ -220,6 +223,7 @@ class Game:
         if not valid_neighbors:
             self.singleton(row, col)
             print("singleton")
+            
         elif len(valid_neighbors) == 1:
             neighbor_row, neighbor_col = valid_neighbors[0]
             neighbor_hotel = self.occupied_tiles.get((neighbor_row, neighbor_col))
@@ -271,32 +275,32 @@ class Game:
 
 #     ]
 # }
-board_data = {
-    "tiles": [
-        # Tiles for "Continental" making it a safe hotel with 11 tiles
-        {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
-        {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
-        {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
-        {"row": "A", "column": 2}, {"row": "B", "column": 2},
-        # Tiles for "American"
-        {"row": "D", "column": 3}, {"row": "E", "column": 3}
-    ],
-    "hotels": [
-        {"hotel": "Continental", "tiles": [
-            {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
-            {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
-            {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
-            {"row": "A", "column": 2}, {"row": "B", "column": 2}
-        ]},
-        {"hotel": "American", "tiles": [
-            {"row": "D", "column": 3}, {"row": "E", "column": 3}
-        ]}
-    ]
-}
+# board_data = {
+#     "tiles": [
+#         # Tiles for "Continental" making it a safe hotel with 11 tiles
+#         {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
+#         {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
+#         {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
+#         {"row": "A", "column": 2}, {"row": "B", "column": 2},
+#         # Tiles for "American"
+#         {"row": "D", "column": 3}, {"row": "E", "column": 3}
+#     ],
+#     "hotels": [
+#         {"hotel": "Continental", "tiles": [
+#             {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
+#             {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
+#             {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
+#             {"row": "A", "column": 2}, {"row": "B", "column": 2}
+#         ]},
+#         {"hotel": "American", "tiles": [
+#             {"row": "D", "column": 3}, {"row": "E", "column": 3}
+#         ]}
+#     ]
+# }
 
 
-# board_data={}
-game=Game(board_data)
+# # board_data={}
+# game=Game(board_data)
 
-game.inspect("C",2)
+# game.inspect("C",2)
 

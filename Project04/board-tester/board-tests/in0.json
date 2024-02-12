@@ -1,0 +1,23 @@
+{
+  "request": "founding",
+  "row": "C",
+  "column": 1,
+  "label": "Sackson",
+  "board": {
+    "tiles": [
+      { "row": "C", "column": 1 },
+      { "row": "A", "column": 1 },
+      { "row": "D", "column": 3 }
+    ],
+    "hotels": [
+      {
+        "hotel": "Continental",
+        "tiles": [{ "row": "A", "column": 1 }]
+      },
+      {
+        "hotel": "American",
+        "tiles": [{ "row": "D", "column": 3 }]
+      }
+    ]
+  }
+}

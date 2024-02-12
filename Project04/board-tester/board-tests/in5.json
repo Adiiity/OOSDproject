@@ -1,0 +1,15 @@
+{
+  "request": "singleton",
+  "row": "D",
+  "column": 6,
+  "board": {
+    "tiles": [
+      { "row": "C", "column": 3 },
+      { "row": "A", "column": 3 }
+    ],
+    "hotels": [
+      { "hotel": "American", "tiles": [{ "row": "C", "column": 3 }] },
+      { "hotel": "Imperial", "tiles": [{ "row": "A", "column": 3 }] }
+    ]
+  }
+}
