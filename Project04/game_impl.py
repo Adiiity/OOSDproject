@@ -268,22 +268,50 @@ class Game:
                 return {"acquirer": acquirer_label, "acquired": acquired_labels}
                 # print({"acquirer": acquirer_label, "acquired": acquired_labels})
 
+    def merging(self, row, col, input_label):
+        tile = Tile(row, col)
+        row_index, col_index = tile.get_row_index(), tile.get_col_index()
+
+        neighbors = [
+            (row_index - 1, col_index),
+            (row_index + 1, col_index),
+            (row_index, col_index - 1),
+            (row_index, col_index + 1)
+        ]
+        neighbor_hotels = {self.board.played_tiles.get(neighbor) for neighbor in neighbors if neighbor in self.board.played_tiles}
+
+        safe_hotels = [hotel for hotel in neighbor_hotels if hotel and len(self.board.played_hotels[hotel]) >= 11]
+        if safe_hotels:
+            return {"impossible": "Cannot merge with a safe hotel."}
+
+        acquirer_label = max(neighbor_hotels, key=lambda hotel: len(self.board.played_hotels[hotel]) if hotel else 0)
+        if not acquirer_label or acquirer_label != input_label:
+            return {"impossible": "Input label does not match the acquirer label or no valid merger found.", "error": "Mismatch in labels or safe hotel present."}
+
+        acquired_labels = [hotel for hotel in neighbor_hotels if hotel and hotel != acquirer_label]
+
+        for acquired_label in acquired_labels:
+            self.board.played_hotels[acquirer_label].extend(self.board.played_hotels[acquired_label])
+            del self.board.played_hotels[acquired_label]
+
+        print("acquirer:", acquirer_label, "acquired:", acquired_labels)
+        return {"acquirer": acquirer_label, "acquired": acquired_labels}
 
 
 # To set up out board
-# board_data = {
-#     "tiles": [
-#         {"row": "A", "column": 1},
-#         {"row": "A", "column": 2}
-#         # {"row": "C", "column": 1}
-
-#     ],
-#     "hotels": [
-#         {"hotel": "Continental", "tiles": [{"row": "A", "column": 1},{"row": "A", "column": 2}]}
-#         # {"hotel": "American", "tiles": [{"row": "C", "column": 1}]}
-
-#     ]
-# }
+board_data ={
+    "tiles": [
+        {"row": "B", "column": 1},
+        {"row": "B", "column": 2},
+        {"row": "C", "column": 3},
+        {"row": "A", "column": 3}
+    ],
+    "hotels": [
+        {"hotel": "Continental", "tiles": [{"row": "B", "column": 2}, {"row": "B", "column": 1}]},
+        {"hotel": "American", "tiles": [{"row": "C", "column": 3}]},
+        {"hotel": "Imperial", "tiles": [{"row": "A", "column": 3}]}
+    ]
+}
 # board_data = {
 #     "tiles": [
 #         # Tiles for "Continental" making it a safe hotel with 11 tiles
@@ -309,7 +337,7 @@ class Game:
 
 
 # board_data={}
-# game=Game(board_data)
+game=Game(board_data)
 
-# game.growing("A",3)
+game.merging("B",3,"Imperial")
 
