@@ -8,7 +8,12 @@ class Bank:
     def get_bank():
         # get bank object
         pass
-
+    def get_stock_certificates():
+        # fetch the stock certificates left
+        pass
+    def get_available_hotels():
+        # fetch available hotels
+        pass
 class Stock:
     # this class works with the stock certificates
     def __init__(self) -> None:
@@ -29,6 +34,10 @@ class Board:
     def print_board():
         # input: board_data
         # output: board
+        pass
+    
+    def current_player():
+        # gets the current player as per the turn sequence 
         pass
 
 class Tiles:
