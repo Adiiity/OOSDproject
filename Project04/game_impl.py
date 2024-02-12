@@ -286,6 +286,7 @@ class Game:
 
         acquirer_label = max(neighbor_hotels, key=lambda hotel: len(self.board.played_hotels[hotel]) if hotel else 0)
         if not acquirer_label or acquirer_label != input_label:
+            # print("error")
             return {"impossible": "Input label does not match the acquirer label or no valid merger found.", "error": "Mismatch in labels or safe hotel present."}
 
         acquired_labels = [hotel for hotel in neighbor_hotels if hotel and hotel != acquirer_label]
@@ -294,7 +295,7 @@ class Game:
             self.board.played_hotels[acquirer_label].extend(self.board.played_hotels[acquired_label])
             del self.board.played_hotels[acquired_label]
 
-        print("acquirer:", acquirer_label, "acquired:", acquired_labels)
+        # print("acquirer:", acquirer_label, "acquired:", acquired_labels)
         return {"acquirer": acquirer_label, "acquired": acquired_labels}
 
 
@@ -312,32 +313,5 @@ board_data ={
         {"hotel": "Imperial", "tiles": [{"row": "A", "column": 3}]}
     ]
 }
-# board_data = {
-#     "tiles": [
-#         # Tiles for "Continental" making it a safe hotel with 11 tiles
-#         {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
-#         {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
-#         {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
-#         {"row": "A", "column": 2}, {"row": "B", "column": 2},
-#         # Tiles for "American"
-#         {"row": "D", "column": 3}, {"row": "E", "column": 3}
-#     ],
-#     "hotels": [
-#         {"hotel": "Continental", "tiles": [
-#             {"row": "A", "column": 1}, {"row": "B", "column": 1}, {"row": "C", "column": 1},
-#             {"row": "D", "column": 1}, {"row": "E", "column": 1}, {"row": "F", "column": 1},
-#             {"row": "G", "column": 1}, {"row": "H", "column": 1}, {"row": "I", "column": 1},
-#             {"row": "A", "column": 2}, {"row": "B", "column": 2}
-#         ]},
-#         {"hotel": "American", "tiles": [
-#             {"row": "D", "column": 3}, {"row": "E", "column": 3}
-#         ]}
-#     ]
-# }
 
-
-# board_data={}
-game=Game(board_data)
-
-game.merging("B",3,"Imperial")
 
