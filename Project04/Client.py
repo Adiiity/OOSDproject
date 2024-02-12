@@ -34,15 +34,15 @@ def process_request(json_request):
         elif request_type == "singleton":
             response = game.singleton(row, column)
             return response
-            # print("response", response)
+
         elif request_type == "growing":
             response = game.growing(row, column)
             return response
         elif request_type == "founding":
             
-            # print(row, column, label, game.board.board_matrix)  
+
             response = game.founding(row, column, label, game.board.board_matrix)  # Pass necessary params
-            # print(response)
+
             return response
         elif request_type == "merging":
             response = game.merging(row, column, label)
@@ -50,7 +50,7 @@ def process_request(json_request):
         else:
             raise ValueError("Unhandled request type.")
 
-        # return json.dumps({response})
+
     except Exception as e:
         return json.dumps({"error": str(e)})
 
@@ -59,10 +59,9 @@ def read_json_file(file_path):
     with open(file_path, 'r') as file:
         return file.read()
 
-# Path to the JSON file
+
 
 # Read and process the JSON request from file
 # json_request = read_json_file('request.json')
 # response = process_request(json_request)
 # print(response)
-

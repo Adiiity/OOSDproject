@@ -70,8 +70,6 @@ class Board:
                 tile = Tile(tile_data['row'], str(tile_data['column']))
                 Hotel.add_tile_to_hotel(hotel_name, tile)  # Associate tile with hotel
 
-        # print(f"played tiles :{self.played_tiles}")
-        # print(f"played hotels :{self.played_hotels}")
 
     def add_tile_to_board(self, tile, hotel_name):
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
@@ -84,20 +82,3 @@ class Board:
         for row in self.board_matrix:
             print(' '.join(map(str, row)))
 
-# Usage
-# board_data = {
-#     "tiles": [
-#         {"row": "A", "column": 1 },
-#         {"row": "B", "column": 2 },
-#         {"row": "B", "column": 3},
-#         {"row": "C", "column": 3}
-
-#     ],
-#     "hotels": [
-#         {"hotel": "Continental", "tiles": [{"row": "A", "column": 1}]},
-#         {"hotel": "American", "tiles": [{"row": "B", "column": 3},{"row": "C", "column": 3}]},
-#     ]
-# }
-
-# board = Board(board_data)
-# board.print_board()
