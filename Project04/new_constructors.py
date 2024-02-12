@@ -70,8 +70,8 @@ class Board:
                 tile = Tile(tile_data['row'], str(tile_data['column']))
                 Hotel.add_tile_to_hotel(hotel_name, tile)  # Associate tile with hotel
 
-        print(f"played tiles :{self.played_tiles}")
-        print(f"played hotels :{self.played_hotels}")
+        # print(f"played tiles :{self.played_tiles}")
+        # print(f"played hotels :{self.played_hotels}")
 
     def add_tile_to_board(self, tile, hotel_name):
         row_index, col_index = tile.get_row_index(), tile.get_col_index()
